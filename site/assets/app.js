@@ -1187,7 +1187,7 @@
         <ul>
           ${DATA.meta.sources.map((source) => `<li><a href="${escAttr(source.url)}" target="_blank" rel="noopener">${esc(source.label)}</a> — ${esc(source.note)}</li>`).join("")}
           <li>词频口径：12 次第1套成篇原文 + 可抽取的试卷 PDF 题干/选项；核心词另加真题精读“生词推断”推荐。</li>
-          <li>考试时间来源：教育部教育考试院 / 全国大学英语四、六级考试报名网，<a href="https://cet.neea.edu.cn/html1/report/2609/1-1.htm" target="_blank" rel="noopener">2026年下半年考试安排</a>。</li>
+          <li>考试时间来源：教育部教育考试院 / 全国大学英语四、六级考试报名网，<a href="https://cet.neea.cn/html1/report/2609/1-1.htm" target="_blank" rel="noopener">2026年下半年考试安排</a>。</li>
         </ul>
       </section>
     `;

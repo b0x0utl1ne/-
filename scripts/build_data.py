@@ -1040,8 +1040,8 @@ def main() -> None:
             "sources": [
                 {
                     "label": "全国大学英语四、六级考试报名网：2026年下半年考试时间",
-                    "url": "https://cet.neea.edu.cn/html1/report/2609/1-1.htm",
-                    "note": "考试日期 2026-12-12，笔试 15:00–17:25。",
+                    "url": "https://cet.neea.cn/html1/report/2609/1-1.htm",
+                    "note": "官方公告：考试日期 2026-12-12，笔试 15:00–17:25。",
                 },
                 {
                     "label": "懒笔记：CET-6 真题文章原文",
