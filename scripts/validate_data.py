@@ -78,6 +78,38 @@ def main() -> None:
     site_data = ROOT / "site" / "data.js"
     if not site_data.exists() or "window.CET6_DATA=" not in site_data.read_text(encoding="utf-8")[:100]:
         fail("site/data.js missing or malformed")
+    site_payload = json.loads(
+        site_data.read_text(encoding="utf-8")
+        .split("=", 1)[1]
+        .rsplit(";", 1)[0]
+    )
+    site_listening = site_payload.get("listening")
+    if not site_listening:
+        fail("site/data.js missing listening metadata")
+    if len(site_listening.get("sets", [])) != len(DATA["sets"]):
+        fail("listening metadata does not cover every set")
+    starts = []
+    listening_ids = set()
+    listening_words = 0
+    for listening_set in site_listening["sets"]:
+        segments = listening_set.get("segments", [])
+        if len(segments) != 7:
+            fail(f"{listening_set.get('id')}: expected 7 listening segments")
+        if not listening_set.get("audio_url"):
+            fail(f"{listening_set.get('id')}: missing audio URL")
+        set_starts = [segment["start"] for segment in segments]
+        if set_starts != sorted(set_starts) or len(set_starts) != len(set(set_starts)):
+            fail(f"{listening_set.get('id')}: segment starts are not increasing")
+        for segment in segments:
+            if segment["id"] in listening_ids:
+                fail(f"duplicate listening segment id: {segment['id']}")
+            listening_ids.add(segment["id"])
+            if not segment.get("paragraphs") or not segment.get("questions"):
+                fail(f"{segment['id']}: missing transcript or question range")
+            if not segment.get("label") or segment.get("word_count", 0) < 20:
+                fail(f"{segment['id']}: invalid label or word count")
+            listening_words += segment["word_count"]
+        starts.extend(set_starts)
     single_html = ROOT / "CET6-词书.html"
     if single_html.exists():
         single_text = single_html.read_text(encoding="utf-8")
@@ -92,6 +124,11 @@ def main() -> None:
     print(f"article_token_coverage={covered}/{total} ({covered / total:.1%})")
     print(f"missing_top={missing.most_common(12)}")
     print(f"plan_days={len(plan)} plan_range={plan[0]['date']}..{plan[-1]['date']}")
+    print(
+        f"listening_sets={len(site_listening['sets'])} "
+        f"listening_segments={len(listening_ids)} "
+        f"listening_words={listening_words}"
+    )
     print(f"site_data={site_data.stat().st_size / 1024 / 1024:.1f} MiB")
     if single_html.exists():
         print(f"single_html={single_html.stat().st_size / 1024 / 1024:.1f} MiB")

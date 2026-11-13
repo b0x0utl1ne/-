@@ -13,11 +13,12 @@
   const WORD_RE = /[A-Za-z]+(?:[-'][A-Za-z]+)*/g;
   const STORAGE_KEY = "cet6-wordbook-v1";
   const EXAM = { year: 2026, month: 12, day: 12, label: "2026-12-12" };
-  const VIEWS = ["today", "words", "reading", "review", "plan", "stats"];
+  const VIEWS = ["today", "words", "reading", "listen", "review", "plan", "stats"];
   const VIEW_TITLES = {
     today: "今日学习",
     words: "核心词书",
     reading: "真题语境",
+    listen: "听力精听",
     review: "复习与测验",
     plan: "29 天计划",
     stats: "学习数据",
@@ -29,6 +30,25 @@
   const WORD_BY_ID = new Map(DATA.words.map((word) => [word.id, word]));
   const ARTICLE_BY_ID = new Map(DATA.articles.map((article) => [article.id, article]));
   const SET_BY_ID = new Map(DATA.sets.map((set) => [set.id, set]));
+  const LISTENING_SETS = DATA.listening?.sets || [];
+  const LISTENING_BY_ID = new Map();
+  const LISTENING_ORDER = [];
+  for (const listeningSet of LISTENING_SETS) {
+    for (const segment of listeningSet.segments || []) {
+      const enriched = {
+        ...segment,
+        set_id: listeningSet.id,
+        set_label: listeningSet.label,
+        audio_url: listeningSet.audio_url,
+        audio_source: listeningSet.audio_source,
+        audio_source_page: listeningSet.audio_source_page,
+        audio_note: listeningSet.audio_note,
+        source_url: listeningSet.source_url,
+      };
+      LISTENING_BY_ID.set(segment.id, enriched);
+      LISTENING_ORDER.push(enriched);
+    }
+  }
   const PLAN_BY_DATE = new Map(DATA.plan.map((day) => [day.date, day]));
   const ARTICLE_ORDER = DATA.articles.map((article) => article.id);
   const PAGE_SIZE = 60;
@@ -40,7 +60,12 @@
     wordSort: "priority",
     wordPage: 1,
     readingArticleId: null,
+    listenSegmentId: null,
+    listenShowTranscript: false,
+    listenLoop: false,
+    listenRate: 1,
     openSets: new Set(),
+    openListenSets: new Set(),
     reviewTab: "due",
     session: null,
     quiz: null,
@@ -57,6 +82,7 @@
       version: 1,
       words: {},
       days: {},
+      listening: { segments: {} },
       settings: { theme: "auto", newPerDay: 25, voice: "aria" },
       streak: { current: 0, best: 0, lastStudy: "" },
     };
@@ -71,6 +97,7 @@
         ...saved,
         words: saved.words || {},
         days: saved.days || {},
+        listening: { segments: saved.listening?.segments || {} },
         settings: { ...defaultStore().settings, ...(saved.settings || {}) },
         streak: { ...defaultStore().streak, ...(saved.streak || {}) },
       };
@@ -205,6 +232,58 @@
       : 1;
     store.streak.lastStudy = today;
     store.streak.best = Math.max(store.streak.best || 0, store.streak.current);
+  }
+
+  function ensureListeningState(id) {
+    if (!store.listening) store.listening = { segments: {} };
+    if (!store.listening.segments) store.listening.segments = {};
+    if (!store.listening.segments[id]) {
+      store.listening.segments[id] = {
+        steps: [],
+        completedOn: null,
+        draft: "",
+      };
+    }
+    return store.listening.segments[id];
+  }
+
+  function listeningState(id) {
+    return store.listening?.segments?.[id] || null;
+  }
+
+  function isListeningComplete(id) {
+    return Boolean(listeningState(id)?.completedOn);
+  }
+
+  function formatClock(seconds) {
+    const value = Math.max(0, Math.round(Number(seconds) || 0));
+    return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
+  }
+
+  function listeningDoneOn(date) {
+    return Object.values(store.listening?.segments || {}).filter(
+      (state) => state.completedOn === date,
+    ).length;
+  }
+
+  function listeningDoneInSet(setId) {
+    return LISTENING_ORDER.filter(
+      (segment) => segment.set_id === setId && isListeningComplete(segment.id),
+    ).length;
+  }
+
+  function recommendedListening() {
+    const plan = todayPlan();
+    const planSetSegments = LISTENING_ORDER.filter(
+      (segment) => segment.set_id === plan?.set_id,
+    );
+    return (
+      planSetSegments.find((segment) => !isListeningComplete(segment.id))
+      || LISTENING_ORDER.find((segment) => !isListeningComplete(segment.id))
+      || planSetSegments[0]
+      || LISTENING_ORDER[0]
+      || null
+    );
   }
 
   function markWord(id, status, options = {}) {
@@ -413,6 +492,13 @@
         ui.readingArticleId = params.get("article");
       }
     }
+    if (view === "listen") {
+      const params = new URLSearchParams(query);
+      const segmentId = params.get("segment");
+      if (segmentId && LISTENING_BY_ID.has(segmentId)) {
+        ui.listenSegmentId = segmentId;
+      }
+    }
     if (view !== "review") {
       ui.session = null;
       ui.quiz = null;
@@ -439,6 +525,25 @@
     if (location.hash === `#/reading?article=${encodeURIComponent(id)}` && ui.view !== "reading") {
       ui.view = "reading";
       render();
+    }
+  }
+
+  function openListening(segmentId = "", options = {}) {
+    let segment = segmentId ? LISTENING_BY_ID.get(segmentId) : null;
+    if (!segment && segmentId) {
+      segment = LISTENING_ORDER.find((item) => item.set_id === segmentId);
+    }
+    segment = segment || recommendedListening();
+    if (!segment) return;
+    ui.listenSegmentId = segment.id;
+    if (options.hideTranscript !== false) ui.listenShowTranscript = false;
+    const next = `#/listen?segment=${encodeURIComponent(segment.id)}`;
+    if (location.hash === next) {
+      ui.view = "listen";
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      location.hash = next;
     }
   }
 
@@ -472,12 +577,14 @@
     if (ui.view === "today") root.innerHTML = renderToday();
     if (ui.view === "words") root.innerHTML = renderWords();
     if (ui.view === "reading") root.innerHTML = renderReading();
+    if (ui.view === "listen") root.innerHTML = renderListening();
     if (ui.view === "review") root.innerHTML = renderReview();
     if (ui.view === "plan") root.innerHTML = renderPlan();
     if (ui.view === "stats") root.innerHTML = renderStats();
     void root.offsetWidth;
     root.classList.add("view-enter");
     bindViewInputs();
+    bindListeningAudio();
     updateChrome();
   }
 
@@ -492,8 +599,11 @@
     const readDone = readTarget ? Math.min(stats.readDone, readTarget) : 0;
     const reviewDone = due.length === 0;
     const newDone = newCount === 0;
+    const listeningRecommendation = recommendedListening();
+    const listeningDoneCount = listeningDoneOn(todayKey());
+    const listeningDone = listeningDoneCount > 0;
     const readingDone = readTarget === 0 || readDone >= readTarget;
-    const pct = progressPercent([reviewDone, newDone, readingDone]);
+    const pct = progressPercent([reviewDone, newDone, listeningDone, readingDone]);
     const days = daysUntilExam();
     const primaryQueue = newCount ? queue : due;
     const featured = primaryQueue[0] || CORE[0];
@@ -540,6 +650,19 @@
           ? `<button class="btn btn-soft btn-sm" data-action="open-today-reading">去精读</button>`
           : `<button class="btn btn-ghost btn-sm" data-action="start-review">去复习</button>`,
       },
+      {
+        icon: "volume",
+        tone: "accent",
+        title: "听力精听",
+        sub: listeningRecommendation
+          ? `${listeningRecommendation.set_label} · ${listeningRecommendation.label} ${listeningRecommendation.questions}`
+          : "听力数据加载后再试",
+        count: Math.min(listeningDoneCount, 1),
+        unit: "/ 1 段",
+        action: listeningRecommendation
+          ? `<button class="btn btn-soft btn-sm" type="button" data-action="open-listening" data-segment="${escAttr(listeningRecommendation.id)}">去精听</button>`
+          : `<span class="pill">待加载</span>`,
+      },
     ];
 
     const previewWords = (newCount ? queue : due.length ? due : CORE).slice(0, 6);
@@ -567,7 +690,7 @@
         <div class="hero-copy">
           <div class="kicker">${DATA.meta.sets} SETS · ${DATA.meta.corpus_words.toLocaleString()} WORDS · ${CORE.length} CORE</div>
           <h1>把真题读成<br><em>你的词库。</em></h1>
-          <p>不从字母表开始。先用真题语境认出词，再让熟悉、陌生、收藏决定下一次什么时候出现。今天只做三件事：复习到期词、${newCount ? `学 ${newCount} 个新词` : "不排新词"}、读 ${readTarget || 1} 篇原文。</p>
+          <p>不从字母表开始。先用真题语境认出词，再让熟悉、陌生、收藏决定下一次什么时候出现。今天只做四件事：复习到期词、${newCount ? `学 ${newCount} 个新词` : "不排新词"}、精听 1 段听力、读 ${readTarget || 1} 篇原文。</p>
           <div class="hero-actions">
             <button class="btn btn-primary btn-lg" data-action="${newCount ? "start-new" : "start-review"}">
               ${icon("arrow")} ${newCount ? "开始今天的新词" : "进入复习"}
@@ -578,7 +701,7 @@
           </div>
           <div class="hero-meta">
             <span>${icon("calendar")} ${esc(plan?.date || today)} · ${esc(plan?.set_label || "阶段复习")}</span>
-            <span>${icon("clock")} 建议 <b>60–80</b> 分钟</span>
+            <span>${icon("clock")} 建议 <b>75–95</b> 分钟</span>
             <span>${icon("flame")} 连续 <b>${store.streak.current || 0}</b> 天</span>
           </div>
         </div>
@@ -596,7 +719,7 @@
         <div class="stack">
           <section class="card">
             <div class="card-head">
-              <div><h3>今天的三件事</h3><p>${esc(dateCN(today))} · ${esc(plan?.focus || "保持复习节奏")}</p></div>
+              <div><h3>今天的四件事</h3><p>${esc(dateCN(today))} · ${esc(plan?.focus || "保持复习节奏")}</p></div>
               <span class="pill pill-ink">${esc(plan?.kind === "study" ? `第 ${plan.part} 组` : plan?.set_label || "今日")}</span>
             </div>
             <div class="task-list">
@@ -631,10 +754,11 @@
               <div class="progress-ring" style="--p:${pct}"><b>${pct}<small>%</small></b></div>
               <div class="progress-copy">
                 <h3>${pct >= 100 ? "今天的闭环完成了" : "把今天做完再走"}</h3>
-                <p>复习 ${stats.reviewDone} 次 · 新词 ${stats.newDone} 个 · 精读 ${stats.readDone} 篇</p>
+                <p>复习 ${stats.reviewDone} 次 · 新词 ${stats.newDone} 个 · 听力 ${listeningDoneCount} 段 · 精读 ${stats.readDone} 篇</p>
                 <div class="mini-stats">
                   <div class="mini-stat"><b>${due.length}</b><span>到期词</span></div>
                   <div class="mini-stat"><b>${newCount}</b><span>今日新词</span></div>
+                  <div class="mini-stat"><b>${listeningDoneCount}</b><span>已精听</span></div>
                   <div class="mini-stat"><b>${readDone}</b><span>已读文章</span></div>
                 </div>
               </div>
@@ -860,6 +984,177 @@
             </div>
           </article>
           <div class="reading-tip">${icon("quote")} 选中语境里最打动你的那句话，记住词在句中的位置，而不是只记中文。</div>
+        </section>
+      </div>
+    `;
+  }
+
+  function listeningCurrent() {
+    let segment = ui.listenSegmentId ? LISTENING_BY_ID.get(ui.listenSegmentId) : null;
+    segment = segment || recommendedListening();
+    if (!segment) return null;
+    ui.listenSegmentId = segment.id;
+    ui.openListenSets.add(segment.set_id);
+    return segment;
+  }
+
+  function renderListening() {
+    const segment = listeningCurrent();
+    if (!segment) {
+      return `<div class="empty-state"><h3>听力数据没有加载</h3><p>先运行 <code>python3 scripts/fetch_listening_meta.py</code> 和 <code>python3 scripts/build_site.py</code>。</p></div>`;
+    }
+    const listeningSet = LISTENING_SETS.find((item) => item.id === segment.set_id);
+    const state = ensureListeningState(segment.id);
+    const stepDone = new Set(state.steps || []);
+    const complete = Boolean(state.completedOn);
+    const globalIndex = LISTENING_ORDER.findIndex((item) => item.id === segment.id);
+    const prev = globalIndex > 0 ? LISTENING_ORDER[globalIndex - 1] : LISTENING_ORDER[LISTENING_ORDER.length - 1];
+    const next = globalIndex < LISTENING_ORDER.length - 1 ? LISTENING_ORDER[globalIndex + 1] : LISTENING_ORDER[0];
+    const sectionLabel = segment.end ? formatClock(segment.end - segment.start) : "至结尾";
+    const steps = [
+      ["盲听做题", "先不看原文，按考试节奏只播一遍"],
+      ["核实对错", "打开原题页面，记录错因，不只对字母"],
+      ["精读全文", "生词看音标和释义，标出题点前后句"],
+      ["关键句听写", "暂停后写关键词，90 秒内完成，再自己对照"],
+      ["跟读 3–5 句", "跟上连读和重音；这一步最能迁移到考场"],
+    ];
+    const setGroups = LISTENING_SETS.map((item) => {
+      const open = ui.openListenSets.has(item.id) || item.id === segment.set_id;
+      const done = listeningDoneInSet(item.id);
+      return `
+        <div class="set-group ${open ? "open" : ""}">
+          <button class="set-toggle" type="button" data-action="listen-set" data-set="${escAttr(item.id)}">
+            <span class="dot"></span><b>${esc(item.label)}</b><span>${done}/7</span>${icon("chevron")}
+          </button>
+          <div class="article-nav">
+            ${item.segments.map((entry) => `
+              <button class="article-link ${entry.id === segment.id ? "active" : ""}" type="button" data-action="listen-segment" data-segment="${escAttr(entry.id)}">
+                <span class="dot"></span>
+                <span>${esc(entry.label)} · ${esc(entry.questions)}<small>${formatClock(entry.start)} 起 · ${entry.word_count} 词${isListeningComplete(entry.id) ? " · 已完成" : ""}</small></span>
+                ${isListeningComplete(entry.id) ? `<span class="listen-seg-check">${icon("check")}</span>` : ""}
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }).join("");
+    const mobileSelect = `
+      <div class="reading-mobile-nav">
+        <label class="inline-search" style="min-width:0;flex:1">${icon("volume")}<select class="select" data-role="listen-segment-select" aria-label="选择听力篇目" style="border:0;background:transparent;height:auto;padding:0;width:100%">
+          ${LISTENING_SETS.map((item) => `<optgroup label="${escAttr(item.label)}">${item.segments.map((entry) => `<option value="${escAttr(entry.id)}" ${entry.id === segment.id ? "selected" : ""}>${esc(entry.label)} · ${esc(entry.questions)}</option>`).join("")}</optgroup>`).join("")}
+        </select></label>
+        <button class="icon-btn" type="button" data-action="toggle-paper-nav" aria-label="打开听力目录">${icon("menu")}</button>
+      </div>
+    `;
+    return `
+      ${viewHead("LISTENING LAB · 真题精听", "每天精听 1 段，不追求听完 12 套", "盲听 → 对答案 → 原文精读 → 90 秒听写 → 跟读 3–5 句。整卷音频按篇定位，不伪造逐句时间轴。", `<button class="btn btn-soft btn-sm" type="button" data-action="open-listening" data-segment="${escAttr(recommendedListening()?.id || segment.id)}">${icon("volume")} 今日推荐</button>`)}
+      ${mobileSelect}
+      <div class="reading-shell listen-shell">
+        <aside class="paper-nav listen-paper-nav" id="paperNav">
+          <div class="paper-nav-head"><h3>12 套 · 84 段</h3><p>已完成 <b id="listenDoneTotal">${Object.values(store.listening?.segments || {}).filter((item) => item.completedOn).length}</b> 段 · 每套 7 段</p></div>
+          ${setGroups}
+        </aside>
+        <section class="listen-main">
+          <article class="listen-stage">
+            <header class="listen-stage-head">
+              <div>
+                <div class="crumbs">${esc(listeningSet?.label || segment.set_label)} / ${esc(segment.questions)} / ${esc(segment.label)}</div>
+                <h2>${esc(segment.label)} <span>${esc(segment.questions)}</span></h2>
+                <div class="listen-meta">
+                  <span class="pill pill-ink">${icon("volume")} ${esc(segment.questions)}</span>
+                  <span class="pill">起点 ${formatClock(segment.start)}</span>
+                  <span class="pill">本段约 ${sectionLabel}</span>
+                  <span class="pill">${segment.word_count} 词原文</span>
+                  ${complete ? `<span class="pill pill-green">${icon("check")} 已完成</span>` : ""}
+                </div>
+              </div>
+              <div class="listen-stage-links">
+                <a class="btn btn-soft btn-sm" href="${escAttr(listeningSet?.source_url || segment.source_url)}" target="_blank" rel="noopener">题目与答案 ↗</a>
+                ${segment.article_url ? `<a class="btn btn-ghost btn-sm" href="${escAttr(segment.article_url)}" target="_blank" rel="noopener">原文页 ↗</a>` : ""}
+              </div>
+            </header>
+
+            <div class="listen-player">
+              <div class="listen-player-top">
+                <button class="listen-play-main" id="listenPlayMain" type="button" data-action="listen-play">
+                  <span class="listen-play-icon">▶</span>
+                  <span>播放本篇</span>
+                </button>
+                <div class="listen-position">
+                  <b id="listenPosition">${formatClock(segment.start)}</b>
+                  <span>从本篇起点开始，整卷音频 ${formatClock(segment.start)}</span>
+                </div>
+              </div>
+              <audio id="listenAudio" class="listen-audio" controls preload="metadata" src="${escAttr(listeningSet?.audio_url || "")}" data-start="${segment.start}" data-end="${segment.end ?? ""}"></audio>
+              <div class="listen-controls">
+                <button class="btn btn-ghost btn-sm" type="button" data-action="listen-back">−10 秒</button>
+                <button class="btn btn-ghost btn-sm" type="button" data-action="listen-forward">+10 秒</button>
+                <button class="btn btn-ghost btn-sm" type="button" data-action="listen-restart">${icon("reset")} 重听本篇</button>
+                <div class="listen-rates" role="group" aria-label="播放速度">
+                  ${[0.75, 1, 1.25].map((rate) => `<button type="button" data-action="listen-rate" data-rate="${rate}" class="${Number(ui.listenRate) === rate ? "active" : ""}">${rate}×</button>`).join("")}
+                </div>
+                <button class="btn btn-ghost btn-sm listen-loop ${ui.listenLoop ? "active" : ""}" type="button" data-action="listen-loop">${icon("reset")} 循环本篇</button>
+                <a class="listen-source-link" href="${escAttr(listeningSet?.audio_source_page || listeningSet?.audio_url || "")}" target="_blank" rel="noopener">${esc(listeningSet?.audio_source || "音频源")} ↗</a>
+              </div>
+              ${listeningSet?.audio_note ? `<p class="listen-audio-note">${esc(listeningSet.audio_note)}</p>` : ""}
+              <div class="listen-audio-error" id="listenAudioError" hidden>
+                <b>音频暂时无法播放。</b>
+                <span>检查网络，或<a href="${escAttr(listeningSet?.audio_url || "")}" target="_blank" rel="noopener">直接打开 MP3</a>；原文和单词卡仍可使用。</span>
+              </div>
+            </div>
+
+            <section class="listen-method">
+              <div class="listen-method-head">
+                <div>
+                  <div class="kicker">FIVE PASSES · 五步精听</div>
+                  <h3>做一遍，不是听五遍背景音</h3>
+                </div>
+                <span id="listenStepCount">${stepDone.size}/5</span>
+              </div>
+              <div class="listen-steps">
+                ${steps.map(([title, note], index) => `
+                  <button class="listen-step ${stepDone.has(index) ? "done" : ""}" type="button" data-action="listen-step" data-step="${index}" aria-pressed="${stepDone.has(index) ? "true" : "false"}">
+                    <b>${String(index + 1).padStart(2, "0")}</b>
+                    <span>${esc(title)}<small>${esc(note)}</small></span>
+                    <i>${icon("check")}</i>
+                  </button>
+                `).join("")}
+              </div>
+              <p class="listen-method-note"><b>量怎么控：</b>每天 1 段精听，最多再泛听 1 段。刘晓燕的“五步”方向合理，但每天两篇都做完整五步，29 天内很难持续。</p>
+            </section>
+
+            <section class="listen-transcript">
+              <div class="listen-section-head">
+                <div><div class="kicker">TRANSCRIPT · 录音原文</div><h3>先别看，做完再展开</h3></div>
+                <button class="btn btn-soft btn-sm" type="button" data-action="toggle-listen-transcript">${ui.listenShowTranscript ? "隐藏原文" : "显示原文"}</button>
+              </div>
+              <div id="listenTranscript" class="article-body listening listen-transcript-body" ${ui.listenShowTranscript ? "" : "hidden"}>
+                ${segment.paragraphs.map((paragraph) => `<p>${wrapWords(paragraph)}</p>`).join("")}
+              </div>
+              ${!ui.listenShowTranscript ? `<button class="listen-blind-cover" type="button" data-action="toggle-listen-transcript"><span>原文已遮挡</span><small>对完答案后展开；右击单词仍可标记</small></button>` : ""}
+            </section>
+
+            <section class="listen-dictation">
+              <div class="listen-section-head">
+                <div><div class="kicker">DICTATION · 关键句听写</div><h3>90 秒，只写题点句</h3></div>
+                <span class="pill">不自动评分</span>
+              </div>
+              <textarea id="listenDraft" data-segment="${escAttr(segment.id)}" rows="4" placeholder="听一句，暂停，写下关键词或整句。写不准也比只看原文有效。">${esc(state.draft || "")}</textarea>
+              <div class="listen-dictation-foot">
+                <span>草稿自动保存在本机；展开原文后自己核对。</span>
+                <button class="btn btn-soft btn-sm" type="button" data-action="listen-check-draft">保存并对照原文</button>
+              </div>
+            </section>
+
+            <footer class="listen-stage-foot">
+              <div class="listen-foot-actions">
+                <button class="btn btn-ghost btn-sm" type="button" data-action="listen-segment" data-segment="${escAttr(prev.id)}">← 上一段</button>
+                <button class="btn ${complete ? "btn-green" : "btn-primary"}" id="listenDoneButton" type="button" data-action="toggle-listen-done" data-segment="${escAttr(segment.id)}">${complete ? `${icon("check")} 已完成，点击取消` : `${icon("check")} 本篇精听完成`}</button>
+                <button class="btn btn-ghost btn-sm" type="button" data-action="listen-segment" data-segment="${escAttr(next.id)}">下一段 →</button>
+              </div>
+              <span>完成只记录你的自我确认；本页不会假装替你判题。</span>
+            </footer>
+          </article>
         </section>
       </div>
     `;
@@ -1148,7 +1443,7 @@
         <div>
           <div class="kicker">THE ONLY TIMELINE</div>
           <h2>12 套 × 2 天 + 3 次阶段复习 + 1 次模考</h2>
-          <p>新词队列按当天计划发放：精读日 25 个，阶段复习日 10 个，模考与考前日 0 个。核心词库有 ${CORE.length} 个，留出机动余量；没学完的词会一直在词书里，不消失。</p>
+          <p>新词队列按当天计划发放：精读日 25 个，阶段复习日 10 个，模考与考前日 0 个。每天另做 1 段听力精听：盲听 → 对答案 → 原文精读 → 90 秒听写 → 跟读 3–5 句。核心词库有 ${CORE.length} 个，留出机动余量；没学完的词会一直在词书里，不消失。</p>
           <div class="plan-summary">
             <div><b>${Math.max(0, days)}</b><span>距考试 / 天</span></div>
             <div><b>${DATA.meta.articles}</b><span>原文 / 篇</span></div>
@@ -1165,7 +1460,7 @@
         ${DATA.plan.map((day) => {
           const isToday = day.date === today;
           const isPast = day.date < today;
-          const active = store.days[day.date] && ((store.days[day.date].newCount || 0) + (store.days[day.date].reviewCount || 0) + (store.days[day.date].quizCount || 0) + (store.days[day.date].readArticles?.length || 0) > 0);
+          const active = (store.days[day.date] && ((store.days[day.date].newCount || 0) + (store.days[day.date].reviewCount || 0) + (store.days[day.date].quizCount || 0) + (store.days[day.date].readArticles?.length || 0) > 0)) || listeningDoneOn(day.date) > 0;
           return `
             <div class="plan-row ${isToday ? "today" : ""} ${isPast && !active ? "past" : ""} ${day.kind === "exam" ? "exam" : ""}" data-action="plan-day" data-date="${escAttr(day.date)}" role="button" tabindex="0">
               <div class="plan-day">D${day.day}<small>${esc(day.kind === "exam" ? "考试" : active ? "已学习" : isPast ? "已过" : "计划")}</small></div>
@@ -1198,12 +1493,15 @@
     const familiar = DATA.words.filter((word) => statusOf(word.id) === "familiar").length;
     const unfamiliar = DATA.words.filter((word) => statusOf(word.id) === "unfamiliar").length;
     const favorites = DATA.words.filter((word) => isFavorite(word.id)).length;
+    const listeningDone = Object.values(store.listening?.segments || {}).filter(
+      (state) => state.completedOn,
+    ).length;
     const due = dueWords().length;
     const today = todayKey();
     const chart = Array.from({ length: 7 }, (_, index) => {
       const date = addDays(today, index - 6);
       const day = store.days[date];
-      const value = day ? (day.newCount || 0) + (day.reviewCount || 0) + (day.quizCount || 0) + (day.readArticles?.length || 0) : 0;
+      const value = (day ? (day.newCount || 0) + (day.reviewCount || 0) + (day.quizCount || 0) + (day.readArticles?.length || 0) : 0) + listeningDoneOn(date);
       return { date, value };
     });
     const max = Math.max(1, ...chart.map((item) => item.value));
@@ -1214,10 +1512,11 @@
         <div class="stat-card green"><span>熟悉</span><b>${familiar}</b><small>进入较长间隔</small></div>
         <div class="stat-card"><span>陌生</span><b>${unfamiliar}</b><small>优先回到复习队列</small></div>
         <div class="stat-card gold"><span>收藏</span><b>${favorites}</b><small>写作/翻译备用</small></div>
+        <div class="stat-card blue"><span>精听</span><b>${listeningDone}</b><small>已完成 / 84 段</small></div>
       </div>
       <div class="stats-grid">
         <section class="card card-pad">
-          <div class="card-head" style="padding:0 0 16px;border:0"><div><h3>最近 7 天活动</h3><p>新词 + 复习 + 测验 + 精读篇数</p></div><span class="pill">${icon("flame")} 连续 ${store.streak.current || 0} 天</span></div>
+          <div class="card-head" style="padding:0 0 16px;border:0"><div><h3>最近 7 天活动</h3><p>新词 + 复习 + 测验 + 精读 + 精听</p></div><span class="pill">${icon("flame")} 连续 ${store.streak.current || 0} 天</span></div>
           <div class="chart">
             ${chart.map((item) => `<div class="chart-col ${item.date === today ? "today" : ""}"><b>${item.value}</b><div class="chart-bar" style="height:${Math.max(3, Math.round((item.value / max) * 135))}px"></div><span>${weekdayCN(item.date).slice(-1)}</span></div>`).join("")}
           </div>
@@ -1568,6 +1867,183 @@
     if (id) openArticle(id);
   }
 
+  function currentAudioSegment() {
+    return LISTENING_BY_ID.get(ui.listenSegmentId) || null;
+  }
+
+  function setListenPlayingUI(isPlaying) {
+    const button = $("#listenPlayMain");
+    if (!button) return;
+    const mark = $(".listen-play-icon", button);
+    const label = $("span:last-child", button);
+    if (mark) mark.textContent = isPlaying ? "Ⅱ" : "▶";
+    if (label) label.textContent = isPlaying ? "暂停" : "播放本篇";
+    button.classList.toggle("playing", isPlaying);
+  }
+
+  function ensureAudioAtSegment(audio, segment, force = false) {
+    const start = Number(segment?.start || 0);
+    const end = segment?.end == null ? null : Number(segment.end);
+    if (
+      force
+      || audio.currentTime < start - 0.2
+      || (end != null && audio.currentTime >= end - 0.12)
+    ) {
+      audio.currentTime = start;
+    }
+  }
+
+  function playCurrentListening(restart = false) {
+    const audio = $("#listenAudio");
+    const segment = currentAudioSegment();
+    if (!audio || !segment) {
+      toast("没有可播放的听力音频");
+      return;
+    }
+    const begin = () => {
+      ensureAudioAtSegment(audio, segment, restart);
+      audio.play().catch(() => {
+        toast("浏览器阻止了播放，再点一次或使用播放器自带的播放键");
+      });
+    };
+    if (audio.readyState >= 1) begin();
+    else {
+      audio.addEventListener("loadedmetadata", begin, { once: true });
+      audio.load();
+    }
+  }
+
+  function seekCurrentListening(delta) {
+    const audio = $("#listenAudio");
+    const segment = currentAudioSegment();
+    if (!audio || !segment) return;
+    const start = Number(segment.start || 0);
+    const limit = segment.end == null ? (audio.duration || Infinity) : Number(segment.end);
+    audio.currentTime = clamp(
+      audio.currentTime + delta,
+      start,
+      Math.max(start, limit - 0.1),
+    );
+  }
+
+  function bindListeningAudio() {
+    const audio = $("#listenAudio");
+    const segment = currentAudioSegment();
+    if (!audio || !segment) return;
+    audio.playbackRate = Number(ui.listenRate) || 1;
+    let initialSeekDone = false;
+    const setInitialPosition = () => {
+      if (initialSeekDone) return;
+      initialSeekDone = true;
+      ensureAudioAtSegment(audio, segment, true);
+      const position = $("#listenPosition");
+      if (position) position.textContent = formatClock(segment.start);
+    };
+    if (audio.readyState >= 1) setInitialPosition();
+    else audio.addEventListener("loadedmetadata", setInitialPosition, { once: true });
+    audio.addEventListener("play", () => {
+      ensureAudioAtSegment(audio, segment, false);
+      setListenPlayingUI(true);
+    });
+    audio.addEventListener("pause", () => setListenPlayingUI(false));
+    audio.addEventListener("timeupdate", () => {
+      const position = $("#listenPosition");
+      if (position) position.textContent = formatClock(audio.currentTime);
+      const end = segment.end == null ? audio.duration : Number(segment.end);
+      if (!Number.isFinite(end) || end <= 0) return;
+      if (audio.currentTime >= end - 0.08) {
+        if (ui.listenLoop) {
+          audio.currentTime = Number(segment.start || 0);
+          if (audio.paused) audio.play().catch(() => {});
+        } else if (!audio.paused) {
+          audio.pause();
+        }
+      }
+    });
+    audio.addEventListener("error", () => {
+      const box = $("#listenAudioError");
+      if (box) box.hidden = false;
+      setListenPlayingUI(false);
+    });
+  }
+
+  function toggleListeningTranscript(forceShow = null) {
+    const transcript = $("#listenTranscript");
+    if (!transcript) return;
+    const shouldShow = forceShow == null ? transcript.hidden : Boolean(forceShow);
+    transcript.hidden = !shouldShow;
+    ui.listenShowTranscript = shouldShow;
+    $$("[data-action='toggle-listen-transcript']").forEach((button) => {
+      if (button.classList.contains("listen-blind-cover")) button.hidden = shouldShow;
+      else button.textContent = shouldShow ? "隐藏原文" : "显示原文";
+    });
+  }
+
+  function toggleListeningStep(index) {
+    const segment = currentAudioSegment();
+    if (!segment) return;
+    const state = ensureListeningState(segment.id);
+    const steps = new Set(state.steps || []);
+    if (steps.has(index)) steps.delete(index);
+    else steps.add(index);
+    state.steps = Array.from(steps).sort((a, b) => a - b);
+    saveStore();
+    const button = $(`[data-action='listen-step'][data-step='${index}']`);
+    if (button) {
+      button.classList.toggle("done", steps.has(index));
+      button.setAttribute("aria-pressed", steps.has(index) ? "true" : "false");
+    }
+    const counter = $("#listenStepCount");
+    if (counter) counter.textContent = `${steps.size}/5`;
+  }
+
+  function toggleListeningDone(segmentId) {
+    const segment = LISTENING_BY_ID.get(segmentId);
+    if (!segment) return;
+    const state = ensureListeningState(segment.id);
+    const wasComplete = Boolean(state.completedOn);
+    state.completedOn = wasComplete ? null : todayKey();
+    if (!wasComplete) touchStudy();
+    saveStore();
+    const button = $("#listenDoneButton");
+    if (button) {
+      button.classList.toggle("btn-green", !wasComplete);
+      button.classList.toggle("btn-primary", wasComplete);
+      button.innerHTML = wasComplete
+        ? `${icon("check")} 本篇精听完成`
+        : `${icon("check")} 已完成，点击取消`;
+    }
+    const setDone = listeningDoneInSet(segment.set_id);
+    const totalDone = Object.values(store.listening?.segments || {}).filter(
+      (item) => item.completedOn,
+    ).length;
+    const totalNode = $("#listenDoneTotal");
+    if (totalNode) totalNode.textContent = String(totalDone);
+    $$("[data-action='listen-set']").forEach((item) => {
+      if (item.dataset.set !== segment.set_id) return;
+      const count = Array.from(item.children).find(
+        (child) => child.tagName === "SPAN" && !child.classList.contains("dot"),
+      );
+      if (count) count.textContent = `${setDone}/7`;
+    });
+    const link = $(`[data-action='listen-segment'][data-segment='${segment.id}']`);
+    if (link) {
+      let check = $(".listen-seg-check", link);
+      if (!wasComplete && !check) {
+        check = document.createElement("span");
+        check.className = "listen-seg-check";
+        check.innerHTML = icon("check");
+        link.appendChild(check);
+      }
+      if (wasComplete && check) check.remove();
+    }
+    toast(
+      wasComplete
+        ? "已取消本篇完成标记"
+        : `${segment.label} ${segment.questions} 已记入今天`,
+    );
+  }
+
   function bindViewInputs() {
     const wordSearch = $("[data-role='word-search']");
     if (wordSearch) {
@@ -1590,6 +2066,22 @@
     if (sort) sort.addEventListener("change", () => { ui.wordSort = sort.value; ui.wordPage = 1; render(); });
     const articleSelect = $("[data-role='article-select']");
     if (articleSelect) articleSelect.addEventListener("change", () => openArticle(articleSelect.value));
+    const listenSelect = $("[data-role='listen-segment-select']");
+    if (listenSelect) {
+      listenSelect.addEventListener("change", () => {
+        openListening(listenSelect.value, { hideTranscript: true });
+      });
+    }
+    const listenDraft = $("#listenDraft");
+    if (listenDraft) {
+      listenDraft.addEventListener("input", () => {
+        const segment = currentAudioSegment();
+        if (!segment) return;
+        const state = ensureListeningState(segment.id);
+        state.draft = listenDraft.value;
+        saveStore();
+      });
+    }
     const importFile = $("#importFile");
     if (importFile) importFile.addEventListener("change", importData);
   }
@@ -1626,6 +2118,7 @@
           ...next,
           words: next.words || {},
           days: next.days || {},
+          listening: { segments: next.listening?.segments || {} },
           settings: { ...defaultStore().settings, ...(next.settings || {}) },
           streak: { ...defaultStore().streak, ...(next.streak || {}) },
         };
@@ -1654,6 +2147,14 @@
     const day = PLAN_BY_DATE.get(date);
     if (!day) return;
     if (day.kind === "study" && day.article_slugs?.length) {
+      const hasListening = day.article_slugs.some((slug) => slug.startsWith("part2-section-"));
+      if (hasListening) {
+        const segment = LISTENING_ORDER.find((item) => item.set_id === day.set_id);
+        if (segment) {
+          openListening(segment.id);
+          return;
+        }
+      }
       openArticle(`${day.set_id}/${day.article_slugs[0]}`);
     } else if (day.kind === "weekly") {
       go("review");
@@ -1743,6 +2244,81 @@
     if (action === "quiz-next") { nextQuiz(); return; }
     if (action === "open-today-reading") { openTodayReading(); return; }
     if (action === "open-article") { openArticle(actionNode.dataset.article); return; }
+    if (action === "open-listening") {
+      openListening(actionNode.dataset.segment || "");
+      return;
+    }
+    if (action === "listen-set") {
+      const setId = actionNode.dataset.set;
+      const currentSetId = currentAudioSegment()?.set_id;
+      if (ui.openListenSets.has(setId)) {
+        ui.openListenSets.delete(setId);
+        renderPreserveScroll();
+        return;
+      }
+      ui.openListenSets.add(setId);
+      if (currentSetId === setId) {
+        renderPreserveScroll();
+        return;
+      }
+      const group = LISTENING_SETS.find((item) => item.id === setId);
+      const first = group?.segments.find((item) => !isListeningComplete(item.id))
+        || group?.segments[0];
+      if (first) openListening(first.id);
+      return;
+    }
+    if (action === "listen-segment") {
+      openListening(actionNode.dataset.segment || "", { hideTranscript: true });
+      return;
+    }
+    if (action === "listen-play") {
+      const audio = $("#listenAudio");
+      if (audio && !audio.paused) audio.pause();
+      else playCurrentListening(false);
+      return;
+    }
+    if (action === "listen-restart") { playCurrentListening(true); return; }
+    if (action === "listen-back") { seekCurrentListening(-10); return; }
+    if (action === "listen-forward") { seekCurrentListening(10); return; }
+    if (action === "listen-rate") {
+      ui.listenRate = Number(actionNode.dataset.rate) || 1;
+      const audio = $("#listenAudio");
+      if (audio) audio.playbackRate = ui.listenRate;
+      $$("[data-action='listen-rate']").forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.rate) === ui.listenRate);
+      });
+      return;
+    }
+    if (action === "listen-loop") {
+      ui.listenLoop = !ui.listenLoop;
+      actionNode.classList.toggle("active", ui.listenLoop);
+      toast(ui.listenLoop ? "已开启本篇循环" : "已关闭本篇循环");
+      return;
+    }
+    if (action === "toggle-listen-transcript") {
+      toggleListeningTranscript();
+      return;
+    }
+    if (action === "listen-step") {
+      toggleListeningStep(Number(actionNode.dataset.step));
+      return;
+    }
+    if (action === "toggle-listen-done") {
+      toggleListeningDone(actionNode.dataset.segment);
+      return;
+    }
+    if (action === "listen-check-draft") {
+      const segment = currentAudioSegment();
+      const draft = $("#listenDraft");
+      if (segment && draft) {
+        ensureListeningState(segment.id).draft = draft.value;
+        saveStore();
+      }
+      toggleListeningTranscript(true);
+      $("#listenTranscript")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      toast("草稿已保存，自己对照原文核对");
+      return;
+    }
     if (action === "prev-article" || action === "next-article") {
       const current = readingCurrent();
       const index = ARTICLE_ORDER.indexOf(current?.id);

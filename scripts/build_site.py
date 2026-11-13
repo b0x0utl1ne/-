@@ -9,11 +9,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "data" / "words.json"
+LISTENING_SOURCE = ROOT / "data" / "listening_meta.json"
 TARGET = ROOT / "site" / "data.js"
 
 
 def main() -> None:
     data = json.loads(SOURCE.read_text(encoding="utf-8"))
+    if LISTENING_SOURCE.exists():
+        data["listening"] = json.loads(
+            LISTENING_SOURCE.read_text(encoding="utf-8")
+        )
     payload = "window.CET6_DATA=" + json.dumps(
         data, ensure_ascii=False, separators=(",", ":")
     ) + ";\n"
