@@ -1,0 +1,336 @@
+{
+  "id": "2022-12-1",
+  "label": "2022年12月 第1套",
+  "source_url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/",
+  "article_count": 11,
+  "word_count": 4767,
+  "articles": [
+    {
+      "id": "2022-12-1/part2-section-a-1",
+      "set_id": "2022-12-1",
+      "slug": "part2-section-a-1",
+      "title": "2022年12月英语六级真题第1套 Part II Section A (1)",
+      "section": "听力·长对话1",
+      "part": "Part II Section A",
+      "genre": "对话",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "proofread",
+        "viable",
+        "retrospect",
+        "depiction"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part2-section-a-1/",
+      "paragraphs": [
+        "M: How's your dissertation going? I'm proofreading my first draft and will submit it to my professor tomorrow.",
+        "W: Oh, I haven't even started writing mine yet, so I'm really worried about finishing by the end of next semester.",
+        "M: You mean you haven't even begun yours yet? The final draft is due in five months.",
+        "W: Of course I've started it, but I can't get to the writing yet as I haven't found enough resources to use, so I'm still researching the topic.",
+        "M: Maybe the problem is the way you're doing your research. I started by talking to my professor about where to look for information, and based on that, I found books in the library and a lot of reputable journal articles on the Internet.",
+        "W: I've tried all that, but don't have enough to write the dissertation as my department's minimum length is 70 pages. I think the problem is that my topic isn't viable. And honestly, my professor did warn me at the beginning that I might not be able to find enough material. But I was so interested in the topic that I didn't let his advice turn me.",
+        "M: Well, I suggest you find a new topic. After all, our professors are here to guide us, so it's best to listen to them.",
+        "W: In retrospect, I wish I had listened to him, but I didn't. And now I don't want to give up my topic as I've already invested so much time and energy.",
+        "M: If you're committed to your current topic, maybe you could make some adjustments rather than abandon it completely. What is your topic?",
+        "W: It's \"Depictions of Femininity in Folklore from the South of the Country\".",
+        "M: That's pretty narrow. You could find more material if you made the topic broader, maybe by including other kinds of depictions.",
+        "W: Broadening the topic is a great idea, I'll start by including folklore from other regions of the country."
+      ],
+      "paragraph_count": 12,
+      "word_count": 328
+    },
+    {
+      "id": "2022-12-1/part2-section-a-2",
+      "set_id": "2022-12-1",
+      "slug": "part2-section-a-2",
+      "title": "2022年12月英语六级真题第1套 Part II Section A (2)",
+      "section": "听力·长对话2",
+      "part": "Part II Section A",
+      "genre": "对话",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "obese",
+        "layman",
+        "advocate"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part2-section-a-2/",
+      "paragraphs": [
+        "W: Today, on Book Talk, we are lucky enough to host John Robbins and discuss his new book, Why Americans Are Fat and How We Can Lose Weight. John isn't just a respected writer; he's also one of the rare celebrity authors writing about science today.",
+        "M: Thanks for having me, Rebecca, but I'm hardly a celebrity.",
+        "W: That's very modest of you to say, considering that your four books have sold a total of seven million copies worldwide, and they've been translated into 12 different languages. What makes people so fascinated with your work?",
+        "M: Well, people read my books because more than 60% of Americans are overweight, or obese. And other countries are facing similar problems. Basically, we all want to know how to fix things.",
+        "W: We certainly do. I've read your new book, and it's fabulous, especially when it comes to the way you make difficult science easy for laymen to understand. That's no small achievement.",
+        "M: I'm glad to hear you find my work accessible, because I was worried when I wrote it that discussing the science might make the book more suited for a specialist audience. My last book was written primarily for the medical community. But this time, I want to help ordinary people take control of their weight.",
+        "W: And how do you suggest they do that? Can you give us the basics of your advice for people who want to lose weight?",
+        "M: Briefly, I argue that every person needs to consider their metabolism and eat what suits their body's needs. I don't advocate one single diet. Some people should eat more carbohydrates than others. And different people need different amounts of protein and fat.",
+        "W: But you do have some recommendations for everyone, including eating ten servings of vegetables and three of fruit a day. We'll talk about those recommendations next, but now we need to take a short break for a message from our sponsor."
+      ],
+      "paragraph_count": 9,
+      "word_count": 324
+    },
+    {
+      "id": "2022-12-1/part2-section-b-1",
+      "set_id": "2022-12-1",
+      "slug": "part2-section-b-1",
+      "title": "2022年12月英语六级真题第1套 Part II Section B (1)",
+      "section": "听力·短文1",
+      "part": "Part II Section B",
+      "genre": "说明文",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "bolster",
+        "predator",
+        "layman",
+        "concede",
+        "prone",
+        "surge"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part2-section-b-1/",
+      "paragraphs": [
+        "Stress is often depicted as negative, but research shows that moderate amounts of it can be beneficial for your brain and your body.",
+        "First, the benefits for the brain. Studies have shown that short periods of stress can actually bolster cognitive functioning. Researchers discovered that placing rats in a stressful situation for just a few hours doubled the growth of new brain cells. The rats also did better on a memory test later on. Scientists think the same thing happens in humans. But how does stress improve memory? It's simple. When your brain cells multiply, your memory can improve. Viewed from a biological perspective, this makes sense, because animals that are better at remembering dangerous situations can avoid them in the future. If an animal encounters a predator and escapes, for example, it's important to remember where and when that encounter happened. Experts assert that the same principle applies to humans.",
+        "Now, let's turn to how stress benefits the body. This may come as a surprise to laymen. But experts say that stress can keep you from getting sick. Scientists concede that chronic stress can make you more prone to illness. But research shows that short periods of stress can actually provide some protection against getting sick, because it increases your immune functioning. One study shows that rats that experienced brief stress had a surge of immune cell response, which makes the immune system better prepared to fight illness. For humans, there's even evidence that experiencing stress before getting vaccinated could help make vaccines more effective."
+      ],
+      "paragraph_count": 3,
+      "word_count": 256
+    },
+    {
+      "id": "2022-12-1/part2-section-b-2",
+      "set_id": "2022-12-1",
+      "slug": "part2-section-b-2",
+      "title": "2022年12月英语六级真题第1套 Part II Section B (2)",
+      "section": "听力·短文2",
+      "part": "Part II Section B",
+      "genre": "议论文",
+      "cefr": "C1",
+      "source_note": "",
+      "key_words": [
+        "dilemma",
+        "diminish",
+        "obsession",
+        "cultivate"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part2-section-b-2/",
+      "paragraphs": [
+        "For many managers and people who work in leadership positions, dealing with emails is a dilemma. It's likely the \"unpredictable, uncontrollable and ongoing nature of day-to-day email in terms of volume, importance and urgency\" contributes to their levels of anxiety and to diminished leadership skills.",
+        "That's because it's not unusual for many leaders to prioritize email management over people management. An obsession with managing their inbox prevents them from dealing with their employees. As a result, they ignore the issues that might only be mild problems at first, until unfortunately, they inevitably transform into a major problem or crisis by virtue of neglect.",
+        "As leaders, they are expected to motivate and inspire their team in pursuit of longer-term strategic goals and also, less ambitiously but more practically, to monitor their daily output, to set clear expectations and to give regular feedback.",
+        "When presented with a choice between the appeal of their inbox and other more important activities, many sacrifice the latter. Daily email demands have a negative impact on their goal progress. This is because leaders must divert resources from other tasks to check, filter and respond to emails.",
+        "The solution is cultivating self-control which is like a muscle—it can be strengthened or improved over time through exercise. Some suggestions include making space in your diary for the only periods during which you'll be checking emails, setting a timer for yourself so you don't become distracted by your inbox for too long, turning off email alerts so you're not interrupted by them."
+      ],
+      "paragraph_count": 5,
+      "word_count": 257
+    },
+    {
+      "id": "2022-12-1/part2-section-c-1",
+      "set_id": "2022-12-1",
+      "slug": "part2-section-c-1",
+      "title": "2022年12月英语六级真题第1套 Part II Section C (1)",
+      "section": "听力·讲座1",
+      "part": "Part II Section C",
+      "genre": "议论文",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "presume",
+        "aesthetic",
+        "bolster",
+        "depict"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part2-section-c-1/",
+      "paragraphs": [
+        "In last week's lecture, we talked about the problems caused by poor eating habits, focusing on how medical professionals are trying to solve these problems. Today, we'll continue with the topic, but focus on research from a different field—marketing.",
+        "Now, what can marketing tell us about improving nutrition? Well, a team of marketing professors has studied the importance of the visual aspect of food and how that influences food choices.",
+        "Those marketing experts assert that the impact of the appearance of food is greater than we might presume, and might hold the key to encouraging better eating. So how important is the appearance of food?",
+        "Research shows that just seeing an appealing photograph of a hamburger in an advertisement, for example, can cause individuals to imagine the taste or smell of that hamburger. This can make them more likely to purchase and consume it. Of course, that's the point of advertisements. So isn't that a good thing?",
+        "Well, the marketing professors argue that this is actually a problem, because the combination of pleasing aesthetics of and easy access to unhealthy foods, such as hamburgers and pizza, may be contributing to a worldwide health crisis. In fact, statistics show that 39% of all adults in the world weigh too much and another 13% are obese.",
+        "Now, as we discussed last time, medical professionals have tried to fight the obesity epidemic by focusing on the nutrients found in different foods, emphasizing things like carbohydrate, fat, sugar and calorie content. But they've had limited success.",
+        "The marketing professors believe that the real solution to obesity is making food look appealing and focusing on the pleasure of both looking at and eating that food. That pleasure can be used as a tool to promote healthy food choices. In fact, the research done by the team showed that associating healthy food with pleasant images, experiences and emotions led to greater interest in purchasing or eating it. \"This is a better strategy,\" they claim, than reminding consumers that a certain food is good for them. But are they right?",
+        "Well, the researchers cited a marketing campaign designed to reverse the sales decline of carrots. The campaign didn't emphasize the carrots' healthy qualities, but embraced their beauty and the pleasure derived from eating them. For example, the ads focused on the bright, beautiful orange color and crisp texture of the carrots. The campaign led to an impressive increase in product sales of more than 10%. The researchers believe that other companies could bolster sales of healthy foods with similar ads, depicting their products as attractive and a source of pleasure."
+      ],
+      "paragraph_count": 8,
+      "word_count": 431
+    },
+    {
+      "id": "2022-12-1/part2-section-c-2",
+      "set_id": "2022-12-1",
+      "slug": "part2-section-c-2",
+      "title": "2022年12月英语六级真题第1套 Part II Section C (2)",
+      "section": "听力·讲座2",
+      "part": "Part II Section C",
+      "genre": "说明文",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "prosperous",
+        "surge",
+        "toxic",
+        "patented",
+        "steep",
+        "viability",
+        "sensation"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part2-section-c-2/",
+      "paragraphs": [
+        "The household cleaning products industry really began to take off in the 1950s. Prior to that, resourceful housewives who had grown up in a less prosperous era relied on substances that they used in their kitchens such as vinegar used to clean windows.",
+        "Today, the household cleaning products industry is worth billions of dollars a year and is dominated by large global companies. In recent years, however, many countries have witnessed a surge in the number of small businesses and companies offering more environment-friendly cleaning products, and they're doing good business too.",
+        "One reason for this is that consumers are becoming more aware of environment and sustainability issues. They also want to make their home a safe place, free from toxic chemicals. The third reason is people's awareness of and knowledge about technology has never been greater. In the past, people might have been skeptical of a new product claimed to be able to achieve amazing cleaning results, but they now have faith in technology's ability to do what was once thought impossible.",
+        "There is perhaps no better example of this than a patented cloth sold by one company, which remarkably uses only water rather than traditional cleaning products. The company claims its cloth lifts, traps and removes dirt and bacteria. And considering that people don't see these products in shops, or advertised on TV or in the press, it has been a pretty steep rise.",
+        "Many of the people behind these companies began testing the viability of their products by selling them at local markets. Then, in many cases, customers are doing the marketing for these products by leaving threads of comments on social media, praising their virtues. There are also TV shows and books dedicated to maintaining home tidiness and cleanliness and the benefits of having a clean home.",
+        "Having a safe and clean home might be one thing people feel they can control in an increasingly out-of-control world. And there are social media celebrities. One woman in Britain has become a social media sensation with more than two million followers for her cleaning tips page."
+      ],
+      "paragraph_count": 6,
+      "word_count": 351
+    },
+    {
+      "id": "2022-12-1/part2-section-c-3",
+      "set_id": "2022-12-1",
+      "slug": "part2-section-c-3",
+      "title": "2022年12月英语六级真题第1套 Part II Section C (3)",
+      "section": "听力·讲座3",
+      "part": "Part II Section C",
+      "genre": "说明文",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "haul",
+        "entrepreneur",
+        "skim",
+        "notorious"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part2-section-c-3/",
+      "paragraphs": [
+        "Throwing spare change into a fountain is a time-honored ritual: throw a penny into the water, and your wish might come true. But all that money has to go somewhere. Otherwise, the growing piles of pennies, quarters and euros could clog up the fountains' works. Today, I'm going to talk about where all the coins go.",
+        "Well, the coins collected can go to all sorts of different places—from fountain maintenance to charity or public service. In New York City, for example, coins collected from fountains in public parks often go towards the fountains' maintenance itself, though entrepreneurs who don't mind getting their hands wet often get to it first. There are over 50 beautiful decorative display fountains in New York City parks. They are cleaned by the parks' staff every few weeks. But most of the coins have already been removed by entrepreneurial New Yorkers and there is not a significant amount left to be collected.",
+        "Other cities, though, can pull in a much more serious haul. Take for example, Rome's famous Trevi fountain: for hundreds of years, visitors have thrown coins over their shoulder into the fountain to ensure that they will return. So many tourists toss in coins that Roman officials have the fountain cleaned every night, reportedly getting as much as $4,000 in loose change from around the world each day. Most of the money collected each night goes towards running a supermarket for the needy. And collecting that cash is serious business. Roman officials have been known to be tough on anyone caught skimming coins from the fountain. In one case in 2005, police arrested four fountain cleaners after they were spotted slipping coins into their own pockets after collecting them. Authorities finally caught one notorious thief named Thomas Morgan and banned him from the fountain after he fished out thousands of dollars in change over 34 years using a magnetic stick.",
+        "For the most part, money collected from privately-owned fountains in the United States also goes to charity. The fountain in New York City's Bryant Park is owned and operated by a not-for-profit corporation, which puts the cash collected by cleaners towards the fountain's own maintenance. Tens of thousands of dollars in coins removed from wishing wells, fountains and ponds in Florida's Walt Disney World are donated each year to support foster children living in the state. Whether or not your wish comes true after tossing a coin into a fountain, you can rest assured knowing that the change is likely going to someone who needs it."
+      ],
+      "paragraph_count": 4,
+      "word_count": 423
+    },
+    {
+      "id": "2022-12-1/part3-section-a",
+      "set_id": "2022-12-1",
+      "slug": "part3-section-a",
+      "title": "We Cling to American Rugged Individualism at Our Peril",
+      "section": "选词填空",
+      "part": "Part III Section A",
+      "genre": "记叙文",
+      "cefr": "C1",
+      "source_note": "CNN(美国有线电视新闻网)2020.03.17文章We Cling to American Rugged Individualism at Our Peril(固守美国顽强的个人主义将自作自受)。",
+      "key_words": [
+        "rattle",
+        "escort",
+        "incoherent"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part3-section-a/",
+      "paragraphs": [
+        "During the summer, when I was a visiting poet at a residency out of state, an angry, confused woman wandered into my class and said: \"I have three guns and I want to use them.\" We all froze. It wasn't clear if she had the guns, but we each know that, when we teach in America, we are already in danger.",
+        "I was dizzy with fear. The woman, who later turned out to be a schizophrenic(精神分裂症患者) without access to her medications, was, by some force, wrestled out and escorted away, then put in a hospital for observation, in a step that was actually safer for everyone than any one of us pressing charges. My class went on; we talked about poems. But despite the fact that the rest of our days on campus passed peacefully, I was rattled. I couldn't shake the sense that in this country we always live at incredible risk.",
+        "A few months later, crisis struck again. While my husband was locking his bike to drop off our 3-year-old daughter for her preschool-aged day camp, a different woman approached. Swiftly and for no apparent reason, she bent down, picked up our daughter, and began to carry her down the street. It was so fast and confusing that my daughter barely cried. My husband, in a burst of speed, chased the woman and reclaimed our daughter. The woman, clearly confused, retreated into the public library. A network of homeless people who generally know the other homeless in the area said they did not recognize the woman. The woman was so clearly unwell that when she was taken into custody she was incoherent. Heartbreakingly, she called our daughter by the name of someone else's child. Each part of the episode was as haunting as it was terrifying."
+      ],
+      "paragraph_count": 3,
+      "word_count": 300
+    },
+    {
+      "id": "2022-12-1/part3-section-b",
+      "set_id": "2022-12-1",
+      "slug": "part3-section-b",
+      "title": "This Man Is Running 7 Marathons on 7 Continents in 7 Days",
+      "section": "长篇阅读",
+      "part": "Part III Section B",
+      "genre": "新闻报道",
+      "cefr": "C1",
+      "source_note": "The Washington Post(华盛顿邮报)2017年1月19日文章This Man Is Running 7 Marathons on 7 Continents in 7 Days(这个人要在七天内跑究七大洲的七场马拉松)。",
+      "key_words": [
+        "penetrating",
+        "aversion",
+        "elite",
+        "fatigue",
+        "initiative",
+        "elastic"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part3-section-b/",
+      "paragraphs": [
+        "Michael Wardian pushed forward into the penetrating arctic(北极的) wind, fighting the urge to speed up. Too much effort and he'd begin to sweat, which, he was told, would only increase the risk of hypothermia(体温过低).",
+        "At the 2014 North Pole Marathon, the temperature dipped to minus-22 degrees F, with a wind chill that made it feel even colder. Along the route, armed guards wandered the large sheets of floating ice to minimize the risk of polar bear attacks.",
+        "\"I like to do stuff that scares me,\" Wardian said. With ice frozen to his beard, Wardian crossed the finish line that April afternoon in a winning time of 4 hours 7 minutes and 40 seconds, almost two hours slower than his personal best over 26.2 miles. The race for Wardian, however, was less about the result than overcoming his aversion to the cold.",
+        "In a few days, Wardian will once again compete in an unfamiliar territory and below-freezing temperatures. He will line up Monday in Antarctica(南极) for the first leg of the World Marathon Challenge—joining 32 other adventure seekers on an unusual journey where participants travel through different time zones and climates to run seven marathons on seven continents in seven days.",
+        "An elite ultra-runner, Wardian has his sights on breaking the event's record average marathon time of 3:32:25 set last January by U.S. Marine Corps captain Daniel Cartica. Wardian, a 42-year-old Arlington resident, is a record-breaking racer, known in the ultra-running community for seeking tough courses and setting world records. Last year, he ran 1,254.65 miles in 47 races. The World Marathon Challenge, like most of Wardian's running goals, will be about pushing his limits. \"I love diverse and unique challenges,\" he said. \"I'm definitely interested in seeing what I can handle and what my body can accept. That drives me.\"",
+        "Something about the way Richard Donovan carried himself appealed to Wardian. Perhaps it was the sense of adventure Donovan displayed when they first met at the 2010 50K Championships in Galway, Ireland, where Donovan was the race director. The two hit it off, and soon Wardian was participating in Donovan's events. It was at the North Pole Marathon, a race that Donovan organizes, that Wardian first heard about the Irishman's plan for the World Marathon Challenge—a challenge that Donovan himself completed in 2009 and 2012. \"I knew that many people had a goal of running seven marathons on seven continents during any time period,\" Donovan, 50, said. \"I felt the natural extension to this idea would be to try to achieve it within a seven-day period.\"",
+        "Wardian started saving for the trip in 2014, connecting with sponsors and getting approval from his wife, Jennifer, before committing. Registration for the event costs 36,000 euros, which covers international charter flights to each of the seven marathon locations: Union Glacier (Antarctica), Punta Arenas, Chile (South America), Miami (North America), Madrid (Europe), Marrakesh, Morocco (Africa), Dubai (Asia) and Sydney (Australia). The challenge is a test of both physical strength and mental fitness. Sleeping on a crammed plane, adjusting to different time zones and finding food to eat (Wardian is a vegetarian) would make it an exhausting trip over a month, let alone a week. \"The key to a race like this is getting comfortable being uncomfortable,\" said Becca Pizzi, last year's women's champion. \"The highs of the race are incredibly high, and the lows incredibly low.\"",
+        "Since turning it into an organized event in 2015, Donovan has attracted a variety of runners. This year's challenge will feature a far more elite field, which includes Ryan Hall, America's fastest marathon runner. Despite his proven track record, Hall said he has no time goals and that he still suffers from the same fatigue issues that forced him to leave the professional ranks in 2015. Hall plans to run with his friend, Pastor Matthew Barnett of The Dream Center in Los Angeles—one of the six American men who will be competing. \"I don't expect to run a step with Mike, but I will be excited to see how he does,\" said the 34-year-old Hall, who began weight-lifting after retiring. \"If I finish within an hour of him in each marathon, I'd be surprised.\"",
+        "Instead, 43-year-old Petr Vabrousek, an elite Czech Ironman champion, is expected to be Wardian's closest challenger. To others on the trip, simply finishing will be its own reward. Sinead Kane of Ireland is aiming to become the first blind person to complete the challenge. And Beth Ann Telford, a 47-year-old federal government worker from Fairfax and the only American female in this year's mix, is using the event as a platform to raise money for cancer research. It's a cause with a personal connection to Telford, who was diagnosed with brain cancer in 2004. \"Doing something like this is definitely the hardest challenge that I've ever done except for the chemotherapy and brain surgery,\" she said. \"It's going to raise awareness. …I just wanted to do something that is epic and this certainly is right up there.\" Wardian, too, hopes his involvement will give him a platform to promote a cause. He recently became an ambassador for the United Nations Women's HeForShe initiative to fight inequalities faced by women and girls worldwide.",
+        "On a chilly December afternoon, Wardian wove through Washington's crowded sidewalks on the way home from his full-time job as an international ship broker. His elastic, 6-foot frame bounced gently and efficiently off the ground with each step of the hilly six-mile trip back to Arlington. This is a daily routine during the week for Wardian, who started racing professionally in 2003 and runs seven days a week, often multiple times a day. When he travels, he prefers to explore new places on his feet.",
+        "But in some ways, Wardian still has trouble thinking of himself as a runner. For the majority of his childhood, Wardian devoted his energy to becoming a Division I lacrosse(长曲棍球) player-a dream he realized when he was recruited to play at Michigan State University. \"Once he decides to do something, he just works at it until he does it,\" Michael's younger sister, Mariele, said. \"Once he decides to do it, it's usually something that's going to happen. He's always been like that. He's a very motivated individual.\"",
+        "It was only a year or so ago that Wardian realized that he had been a runner longer than a lacrosse player. It was not until he ran in the 2004 U.S. Olympic Marathon Trials-the first of three for Wardian-that he felt that he was a legitimate runner. Now more than 10 years and numerous ultra-marathon national titles and world records later, he embraces that identity. Wardian wants to see how far his legs can take him, one epic challenge at a time. \"I want to always keep doing things that are exciting, adventurous, different and most importantly, probably things I'm not the best at,\" Wardian said, \"because if you're not seeking things out that are challenging and difficult for you, then you're not growing … So I hope maybe people see what I do, and say, 'Okay, I want to do something different or try something new. … I'm going to do something that scares me.' That's what I'm hoping people will take from it.\""
+      ],
+      "paragraph_count": 12,
+      "word_count": 1204
+    },
+    {
+      "id": "2022-12-1/part3-section-c-1",
+      "set_id": "2022-12-1",
+      "slug": "part3-section-c-1",
+      "title": "The Downside of Work-Related Self-Esteem",
+      "section": "仔细阅读1",
+      "part": "Part III Section C",
+      "genre": "议论文",
+      "cefr": "C1",
+      "source_note": "The Sydney Morning Herald《悉尼先驱晨报》2020.01.31文章The Downside of Work-Related Self-Esteem(与工作有关的自尊的弊端)。",
+      "key_words": [
+        "vigor",
+        "swell",
+        "hinder",
+        "deplete",
+        "culminate",
+        "compel",
+        "neutralize"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part3-section-c-1/",
+      "paragraphs": [
+        "Many people associate their self-worth with their work. The more successful their career, the better they feel about themselves. Work-related self-esteem is therefore a worthy ideal to pursue with vigor, right? Well, not always. According to recent research, in which psychologists interviewed 370 full-time workers over a period of three weeks, the reality is a little more complicated. And it involves negative as well as positive consequences.",
+        "It's natural to be drawn towards pleasure and to step away from pain. In the workplace, if that pleasure comes from a triumph which swells our self-respect, people will try to repeat the accomplishment. But repeating that accomplishment is often not realistic, which can lead to severe negative emotional consequences when it doesn't reoccur. This form of motivation is widely regarded as a negative type of motivation. It can hinder other more positive motivation types, such as completing a task purely because it's fulfilling or enjoyable.",
+        "What consumes the employee instead is a pressing need to feel mighty and sure of themselves. They then take on only tasks and objectives which serve that ego-driven need. As a result, to avoid feelings of shame and worthlessness associated with failure, they extend themselves to such a degree that there's a subsequent adverse effect on their well-being. This internal pressure to succeed at all costs demands a lot of effort. It depletes their energy, culminating in disproportionate levels of damaging sentiment.",
+        "Those negative emotions mount into heightened anxiety, impacting their ability to make the most of their personal life. Their desire to avoid feeling inferior ends up making them feel inferior when it comes to their diminished capacity for friendship and leisure. They end up dissatisfied both at work and outside of it.",
+        "But thankfully, for those people compelled almost entirely by this specific form of motivation, the news isn't all bad, or bad at all. The study also discovered several positive outcomes that can actually outweigh the harmful ones. Though these types of employees are motivated by the desire to avoid negative consequences, they are also motivated by the excitement of pursuing emotional rewards. This excitement makes pursuing goals enjoyable and stimulates pleasure and pride that would result from success. An effect of the positive motivation is that it neutralizes the existence of negative motivation.",
+        "Sure, it affects people's personal lives to what could be deemed an unhealthy extent, because leisure activities are often seen as a part of life that must be sacrificed to manage work and family demands. However, the way people feel about their work has less to do with whether they're motivated by the preservation of self-esteem but more with the fact that they're simply motivated."
+      ],
+      "paragraph_count": 6,
+      "word_count": 452
+    },
+    {
+      "id": "2022-12-1/part3-section-c-2",
+      "set_id": "2022-12-1",
+      "slug": "part3-section-c-2",
+      "title": "Humans Damaging the Environment Faster Than lt Can Recover，UN Finds",
+      "section": "仔细阅读2",
+      "part": "Part III Section C",
+      "genre": "新闻报道",
+      "cefr": "C1",
+      "source_note": "The Guardian《卫报》2016.05.19文章Humans Damaging the Environment Faster Than lt Can Recover，UN Finds(联合国发现,人类破坏环境的速度超过了其自我恢复的能力)。",
+      "key_words": [
+        "outpace",
+        "scarcity",
+        "remedy",
+        "curb",
+        "aggravate",
+        "alleviate"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/part3-section-c-2/",
+      "paragraphs": [
+        "Degradation of the world's natural resources by humans is rapidly outpacing the planet's ability to absorb the damage, a recent UN environmental study has found. The study concludes that without radical action the level of prosperity that millions of people in the developed world count on will be impossible to maintain or extend to poorer countries.",
+        "Water scarcity is the curse of some of the poorest regions on Earth, leaving developing countries increasingly unable to feed themselves, and causing hardship for millions of people. There appears little prospect of this desperate situation being remedied without radical action being taken. Water resources are under increasing threat from population growth, climate change, rapid urbanization, rising levels of consumption, and the degradation of lands that previously provided a natural replenishment(补充) of water resources.",
+        "The rate of damage to the natural environment was found to increase globally, despite concerted efforts to persuade government to take measures to improve the condition. \"If current trends continue, and the world fails to improve patterns of production and consumption, then the state of the world's environment will continue to decline,\" warned UN executive director Achim Steiner.",
+        "He said the tools for improving the environment for millions of people existed in developed countries, but were in danger of not being used.",
+        "The study found that basic measures to tackle some of the key causes of environmental damage were still not being taken. These included measures to reduce air pollution; to control the damage to marine ecosystems, which can have a huge effect on fish stocks on which hundreds of millions of people depend; and to curb the degradation of land where modern agricultural methods were pursued without regard to the longer-term consequences.",
+        "Despite the recent global agreement on cutting greenhouse gas emissions, global carbon output continues to rise. This will put a long-term strain on the ability of developing economies to feed their own people. Climate change is aggravated by the emissions of greenhouse gases from chemical and natural fertilisers used in agriculture which increased by more than a quarter between 2000 and 2010. Other problem areas identified in the report included glaciers, which provide vital water resources for millions of people, but which are shrinking as the climate warms.",
+        "In rich countries, these problems have built up over decades and centuries while economic growth was pursued at the expense of the environment. Subsequent efforts to remedy the environment have met with partial success. But in developing countries, the path of future development has more potential to change, which has encouraged international institutions to devise more sustainable growth pathways that are supposed both to alleviate poverty and preserve the environment."
+      ],
+      "paragraph_count": 7,
+      "word_count": 441
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "source": "懒笔记 CET-6 真题文章",
+  "source_url": "https://english-exam.lazynote.cn/cet6/articles/",
+  "selection": "最近12次考试的第1套；包含2022年9月、2023年3月加考",
+  "sets": [
+    {
+      "id": "2026-06-1",
+      "label": "2026年6月 第1套",
+      "article_count": 11,
+      "word_count": 4729,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2026-06-1/"
+    },
+    {
+      "id": "2025-12-1",
+      "label": "2025年12月 第1套",
+      "article_count": 9,
+      "word_count": 4291,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2025-12-1/"
+    },
+    {
+      "id": "2025-06-1",
+      "label": "2025年6月 第1套",
+      "article_count": 11,
+      "word_count": 4802,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2025-06-1/"
+    },
+    {
+      "id": "2024-12-1",
+      "label": "2024年12月 第1套",
+      "article_count": 8,
+      "word_count": 3971,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2024-12-1/"
+    },
+    {
+      "id": "2024-06-1",
+      "label": "2024年6月 第1套",
+      "article_count": 11,
+      "word_count": 4709,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2024-06-1/"
+    },
+    {
+      "id": "2023-12-1",
+      "label": "2023年12月 第1套",
+      "article_count": 9,
+      "word_count": 4248,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2023-12-1/"
+    },
+    {
+      "id": "2023-06-1",
+      "label": "2023年6月 第1套",
+      "article_count": 11,
+      "word_count": 4751,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2023-06-1/"
+    },
+    {
+      "id": "2023-03-1",
+      "label": "2023年3月 第1套（加考）",
+      "article_count": 11,
+      "word_count": 4661,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2023-03-1/"
+    },
+    {
+      "id": "2022-12-1",
+      "label": "2022年12月 第1套",
+      "article_count": 11,
+      "word_count": 4767,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2022-12-1/"
+    },
+    {
+      "id": "2022-09-1",
+      "label": "2022年9月 第1套（加考）",
+      "article_count": 11,
+      "word_count": 4657,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2022-09-1/"
+    },
+    {
+      "id": "2022-06-1",
+      "label": "2022年6月 第1套",
+      "article_count": 10,
+      "word_count": 4406,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/"
+    },
+    {
+      "id": "2021-12-1",
+      "label": "2021年12月 第1套",
+      "article_count": 10,
+      "word_count": 4498,
+      "source_url": "https://english-exam.lazynote.cn/cet6/articles/2021-12-1/"
+    }
+  ],
+  "article_count": 123,
+  "word_count": 54490,
+  "extracted_at": "2026-11-13T13:52:45+0800",
+  "sha256": "7fc9ba0398b883c8a761a5bfd8b5ef9c6f9d5fa1a1cc2e8100b3f8551eae9ad3"
+}

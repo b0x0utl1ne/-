@@ -1,0 +1,301 @@
+{
+  "id": "2022-06-1",
+  "label": "2022年6月 第1套",
+  "source_url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/",
+  "article_count": 10,
+  "word_count": 4406,
+  "articles": [
+    {
+      "id": "2022-06-1/part2-section-a-1",
+      "set_id": "2022-06-1",
+      "slug": "part2-section-a-1",
+      "title": "2022年6月英语六级真题第1套 Part II Section A (1)",
+      "section": "听力·长对话1",
+      "part": "Part II Section A",
+      "genre": "对话",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "offspring",
+        "obsession",
+        "proofread",
+        "optimal"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part2-section-a-1/",
+      "paragraphs": [
+        "W: Mr. David Jackson, a staff writer at the New Yorker, is known for his non-fiction books of adventure. Today, we go on a different kind of adventure: Jackson's life of parenting his offspring. David, as a parent of an 11- and a 14-year-old, what is the most interesting issue you are dealing with right now?",
+        "M: It's easy to focus on the challenges, but so far, I find these ages to be kind of wonderful. They are independent, and they have their own curiosities and obsessions. You can talk to them about fairly sophisticated subject matter such as politics.",
+        "W: Yes, that does sound refreshing compared with talking to younger children. Do they ask you to proofread their essays?",
+        "M: Certainly, with writing they do. I really just try to be encouraging. I think at this age, editorial guidance is less important than encouragement.",
+        "W: Are there books that you think are important that your children read, and that all children read?",
+        "M: My general thought is to read widely and to incorporate a love for reading. Learning to love to read, I think, is the optimal thing, because it gives you a skill you can take anywhere.",
+        "W: So you're not too concerned like some parents with the content they're reading? I know I have some worries about that.",
+        "M: Yeah, read what you like. If a child loves graphic novels or comic books, whatever it is, that is turning them on to read and turning on their imagination.",
+        "W: I feel that children's tastes in books change as they reach adolescence. I know that mine certainly did when I was a teenager. What do you think?",
+        "M: I think it's especially important as they get older to read subject matter that'll open their eyes to the world and people. So I think both fiction and non-fiction are really important because they give you the power to begin to perceive the world through the lives of others."
+      ],
+      "paragraph_count": 10,
+      "word_count": 331
+    },
+    {
+      "id": "2022-06-1/part2-section-a-2",
+      "set_id": "2022-06-1",
+      "slug": "part2-section-a-2",
+      "title": "2022年6月英语六级真题第1套 Part II Section A (2)",
+      "section": "听力·长对话2",
+      "part": "Part II Section A",
+      "genre": "对话",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "specialty",
+        "persevere",
+        "entrepreneur"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part2-section-a-2/",
+      "paragraphs": [
+        "M: In this episode of Money Talks, our guest is Molly Sanders, a university student and a successful young entrepreneur. Molly, tell us about your business.",
+        "W: Well, I sell specialty clothes through a website, mainly for women who have trouble finding suitable clothes in main street shops because of their height or weight. But I do some men's clothes too.",
+        "M: How did you get started in this business at such a young age? Are you studying fashion design?",
+        "W: Actually, I'm majoring in finance, but I've always loved clothes. And I started making my own at 14.",
+        "M: Did you have any sort of training in design or sewing? Or was it a natural ability?",
+        "W: I'd have to say no to both. No one taught me to make clothes and most of the things I made at first were disasters.",
+        "M: Why did you persevere? I think most people would give up if they kept failing, especially at that age.",
+        "W: I kept on out of necessity. As you can see, I'm very tall and I couldn't find clothes that fit me in ordinary shops. So I kept trying and developed my skills over time.",
+        "M: Well, my notes say you earned $50,000 in profits last year, an extraordinary amount for a 20-year-old student. How did that happen? Did you see a gap in the market and decide to fill it?",
+        "W: No. When I started university, some classmates complimented my clothes. And when I said I made them myself, other tall women started asking if I would make theirs. And I did. And before I knew it, I was an entrepreneur.",
+        "M: So what are your plans for the future? Do you intend to open a physical store?",
+        "W: No. I'll keep things online to keep costs down. But I will add more clothes for children, both girls and boys, and possibly even for infants. And I hope to add to my range of designs for men."
+      ],
+      "paragraph_count": 12,
+      "word_count": 330
+    },
+    {
+      "id": "2022-06-1/part2-section-b-2",
+      "set_id": "2022-06-1",
+      "slug": "part2-section-b-2",
+      "title": "2022年6月英语六级真题第1套 Part II Section B (2)",
+      "section": "听力·短文2",
+      "part": "Part II Section B",
+      "genre": "说明文",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "evasive",
+        "nonetheless",
+        "rigorously"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part2-section-b-2/",
+      "paragraphs": [
+        "A recent study overturned what we think we know about lying. Most of us have a theory about how to tell if someone is telling a lie. We may develop that theory from observations of those people we know well and see regularly, but we tend to generalize what we gather from that unscientific daily research and make it a universal theory.",
+        "So we might imagine that liars have evasive eyes, or the opposite—they simply stare at you. Or perhaps it is more generally nervous behavior we associate with lies. Whatever the particular theory, it's usually based on close observation of people we know. And we get lots of practice. On average, we're lied to some 200 times per day. These are mostly harmless lies, but lies nonetheless.",
+        "But there's a problem with our theories, even though they're based on all these observations. The average person—you and me—tested rigorously on how well we detect lies fails to do better than chance. That's well established over many studies and lots of attempts by researchers to work out reliable ways to detect lies. It's even relatively easy to fool lie detectors, the gold standard of lie detection, by training yourself in breathing techniques and symptom suppression.",
+        "Is there any way to get better at detecting lies? The new research offers some surprising advice. Stop looking and listen instead. It turns out that if we're unable to see the face, but rather focus on the voice of the person in question, our accuracy rate improves considerably."
+      ],
+      "paragraph_count": 4,
+      "word_count": 255
+    },
+    {
+      "id": "2022-06-1/part2-section-c-1",
+      "set_id": "2022-06-1",
+      "slug": "part2-section-c-1",
+      "title": "2022年6月英语六级真题第1套 Part II Section C (1)",
+      "section": "听力·讲座1",
+      "part": "Part II Section C",
+      "genre": "议论文",
+      "cefr": "C1",
+      "source_note": "",
+      "key_words": [
+        "submissive",
+        "establishment",
+        "spinal",
+        "mercifully",
+        "intervene",
+        "advocate"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part2-section-c-1/",
+      "paragraphs": [
+        "Appear to be submissive, humble, grateful and undemanding; show great pleasure when a doctor comes into your room, even if the visit is brief and useless. Don't challenge anyone with authority unless you are famous or very rich.",
+        "Those are a few strategies for dealing with today's American medical establishment. What patients want is to be treated with respect and consideration. But in my experience, too few hospitals and doctors are ready to do that. In his book, A Whole New Life, novelist Reynolds Price recalls that his doctors chose a crowded hallway as the place to tell him he might have a tumor on his spinal cord. It did not occur to the two physicians that a hallway was not the most appropriate place for that particular piece of news.",
+        "My surgeon, who is in his mid-thirties, looks tired. He has been overwhelmed with patients who have fallen on the winter ice. He is a witty man, but sometimes his wit is unwelcome.",
+        "\"The health insurance company Blue Cross wants me to put you out in the snow tomorrow afternoon,\" he tells me after I have been in the hospital for more than a week. I'm terrified because I have no idea where to go. I cannot walk or even lift my leg a few inches. The hospital social worker strikes me as an idiot. But my complaints about her only annoy my surgeon. \"I have to work with these people,\" he tells my friend, Dr. Karen Brudney, when she mercifully intervenes on my behalf and arranges for me to be transferred to another hospital.",
+        "\"If you say one negative thing, they get defensive,\" she tells me later. \"They have this kind of institutional loyalty. Always bring an advocate, that is, any other person with you to the hospital, and write down every single question and the answer, the name of every doctor and nurse. When people know you have their names, they behave better. And,\" Brudney adds, \"if you, as a patient, suggest that you might like to control even part of the situation or be consulted or informed, then you are considered difficult. They want you to be totally passive. The entire health care system, particularly hospitals and nursing homes, exists for reasons that have nothing to do with taking care of patients. Patients are incidental.\""
+      ],
+      "paragraph_count": 5,
+      "word_count": 390
+    },
+    {
+      "id": "2022-06-1/part2-section-c-2",
+      "set_id": "2022-06-1",
+      "slug": "part2-section-c-2",
+      "title": "2022年6月英语六级真题第1套 Part II Section C (2)",
+      "section": "听力·讲座2",
+      "part": "Part II Section C",
+      "genre": "议论文",
+      "cefr": "C1",
+      "source_note": "",
+      "key_words": [
+        "vitality",
+        "demographics",
+        "incline",
+        "cohesive"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part2-section-c-2/",
+      "paragraphs": [
+        "There are probably teams you've worked with but you never want to work with again. But there must have also been other teams that you would prize reuniting with professionally. In other words, your team had vitality. Vitality comes about when the ties people form with their fellow team members are such that they stay connected even after the team breaks up.",
+        "What characteristics of a team make its members more likely to stay in contact despite no longer working together? This question has been answered recently in a study published in a business journal.",
+        "One of the two key factors the research team discovered is sameness. Specifically, sharing the same gender or ethnic origin. The more members of a team share similar demographics, the more inclined they will be to remain associates long after the team has served its purpose. After ties are established, similarity strengthens them. As a result, they regard these individuals with greater trust and mutual understanding, which motivates them to seek further opportunities for collaboration. In effect, people tend to create stronger and longer-lasting connections with similar others. Someone who looks and sounds different from us may have the resources we need to be more successful. Yet, we find them to be significantly less credible simply because they are different. If you are a fierce advocate of workplace diversity, you'll no doubt be horrified by such a revelation.",
+        "The second factor identified by the researchers is the quality of the relationships among the team members. The more they trust one another, share the same goals and depend on each other for the achievement of those goals, the stronger their chances of maintaining their connections, despite no longer working as one team. Teams with quality relationships have a shared belief that it's safe to take risks with each other, and their members are obliged to share the workload and help out.",
+        "From personal experience, I can see both the truth and the inconsistency of such studies. The truth is some of my closest friendships were formed as a result of having worked together on teams, and I actively seek opportunities to work with them again. The inconsistency, though, is that I've never worked for a team more successful and cohesive than the one of which I am a member right now. And yet, the four of us have very little in common and are completely different demographically. So I am unlikely to question the value of a diverse workforce."
+      ],
+      "paragraph_count": 5,
+      "word_count": 414
+    },
+    {
+      "id": "2022-06-1/part2-section-c-3",
+      "set_id": "2022-06-1",
+      "slug": "part2-section-c-3",
+      "title": "2022年6月英语六级真题第1套 Part II Section C (3)",
+      "section": "听力·讲座3",
+      "part": "Part II Section C",
+      "genre": "说明文",
+      "cefr": "B2",
+      "source_note": "",
+      "key_words": [
+        "thrifty",
+        "astronomical",
+        "yield",
+        "creep",
+        "align"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part2-section-c-3/",
+      "paragraphs": [
+        "An American researcher who studied 600 millionaires found how rich you can get comes down to six wealth factors. She found that six behaviors are related to net worth potential, regardless of age or income. These were thriftiness, confidence, responsibility, planning, focus and social indifference.",
+        "Being thrifty comes as no great surprise. Spending above your means, spending instead of saving for retirement, spending in anticipation of becoming wealthy, makes you a slave to the paycheck. \"Even with an astronomical level of income,\" she wrote, \"to properly build wealth, experts recommend saving 20% of your income and living off the remaining 80%.\"",
+        "Having confidence is another key characteristic, as it helps people to be thrifty. It takes confidence to live within your means. It also takes confidence to invest properly. Instead of making investing decisions with your emotions, financial planners advise that you should leave your investments alone and focus on a long-term investment plan. But people can't invest or manage their own money without accepting responsibility for the outcomes. Many millionaires take on personal responsibility, and most also happen to be self-made, meaning they didn't acquire their wealth through luck. Millionaires don't count on anyone else to make them rich, and they don't blame anyone else if they fall short. They focus on things they can control and align their daily habits to the goals they have set for themselves. They tend to be goal-oriented and hard workers, which enables them to plan financially and focus on seeing those plans through. 92% of the millionaires surveyed developed a long term plan for their money and 97% almost always achieved the goals they set for themselves.",
+        "And it is these behaviors that make it easy for them to be socially indifferent. They resist lifestyle creep, the tendency to spend more whenever one earns more. Essentially, they don't yield to pressure to buy the latest thing or to keep up with others or what they have acquired. Instead of being focused on what might make them happy today, they're focused on their long-term wealth-building plan."
+      ],
+      "paragraph_count": 4,
+      "word_count": 343
+    },
+    {
+      "id": "2022-06-1/part3-section-a",
+      "set_id": "2022-06-1",
+      "slug": "part3-section-a",
+      "title": "A Short History of Bathing in Bath",
+      "section": "选词填空",
+      "part": "Part III Section A",
+      "genre": "说明文",
+      "cefr": "B2",
+      "source_note": "2017年2月2日刊登在Bradt Guides(《布拉德特旅游指南》)上一篇标题为“A Short History of Bathing in Bath”(《巴斯浴场简史》)的文章。",
+      "key_words": [
+        "aesthetic",
+        "intervene",
+        "legitimate",
+        "remedy"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part3-section-a/",
+      "paragraphs": [
+        "The city of Bath was founded by the Romans almost two thousand years ago. It has been famous for its aesthetically pleasing architecture and healing thermal springs ever since.",
+        "There are three hot springs in Bath; one is the King's Spring, upon which the Roman Baths and a temple were constructed. The other two are the Cross Spring and the Hetling Spring, close to each other in Hot Bath Street. Although Bath is principally known as a Roman and Georgian city, many people came in the intervening centuries to make use of the natural waters.",
+        "While the Georgians made 'taking the waters' or bathing particularly fashionable, it was previous generations who paved the way, creating greater interest in Bath and its springs. Charles II, desperate for an heir and unable to produce a legitimate son, came to Bath to take the waters in the hope that their magical powers would do something to remedy the situation. Craving for a male heir, James and Mary both came to Bath and soon after produced a son, which bred many conspiracy theories about who was the real father of their offspring. Regardless, the 'miracle' created something of a boom in tourism for Bath and once Queen Anne had paid a visit in 1702, sealing it as the place to be, the whole nation flocked to the city.",
+        "Afterwards, the spas(矿泉疗养浴场) in Bath continued to go in and out of fashion for more than 150 years until they closed completely. The new Bath Spa, which opened in 2006, incorporates modern architecture with the ancient spring, now the New Royal Bath."
+      ],
+      "paragraph_count": 4,
+      "word_count": 263
+    },
+    {
+      "id": "2022-06-1/part3-section-b",
+      "set_id": "2022-06-1",
+      "slug": "part3-section-b",
+      "title": "The Doctor Will skype You Now:Virtual Checkups Reach Bangladesh's Isolated Islands",
+      "section": "长篇阅读",
+      "part": "Part III Section B",
+      "genre": "新闻报道",
+      "cefr": "C1",
+      "source_note": "2019年刊登在 NPR(美国国家公共广播电台)网站上一篇标题为“The Doctor Will skype You Now:Virtual Checkups Reach Bangladesh's Isolated Islands”(《医生要与你语音通话:孟加拉国偏远岛屿的居民接受虚拟体检》)的文章。",
+      "key_words": [
+        "trek",
+        "dwelling",
+        "ordeal",
+        "makeshift",
+        "ailment",
+        "persistent"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part3-section-b/",
+      "paragraphs": [
+        "Fazila is a young woman that has been dealing with eczema(湿疹), a common skin condition, for the past five years, but never got it treated. The nearest hospital is an hour away, by boat and bus, and her skin condition didn't seem serious enough to make the trek, so she ignored it—until a new technology brought the doctor to her. Fazila lives on one of the remote river islands in northern Bangladesh. These islands are low-lying, temporary sand islands that are continuously formed and destroyed through sand buildup and erosion. They are home to over six million people, who face repeated displacement from flooding and erosion—which may be getting worse because of climate change—and a range of health risks, including poor nutrition, malaria(疟疾) and other water-borne diseases.",
+        "The most dangerous thing for these remote island dwellers is land erosion. The second is lack of access to medical supplies and doctors. There are no doctors within miles, and while child mortality and maternal death have gone down in the rest of the country, this is not the case for the islands. The medical situation is so bad that it really takes away from the quality of their life. Yet for many island inhabitants—some of Bangladesh's poorest—paying for health care is a costly ordeal. Victims of erosion lose their houses, agricultural land and jobs as farmers, fishermen and day laborers. Though government hospitals are free, many people hesitate to go, citing long commutes, endless lines and questionable diagnoses. For convenience's sake, one-third of rural households visit unqualified village doctors, who rely on unscientific methods of treatment, according to a 2016 study in the peer-reviewed journal Global Health Action.",
+        "On the islands, there's even a colloquial(口头的) expression for the idea of making medical care your lowest priority: It's known as \"rog pushai rakha\" in Bengali, which roughly translates to \"stockpiling their diseases\"—waiting to seek medical attention until a condition becomes extremely serious. Now, a new virtual medical service called Teledaktar (TD) is trying to make health care more easily accessible. Every week, TD's medical operators travel to the islands by boat, carrying a laptop, a portable printer for prescriptions and tools to run basic medical screenings such as blood pressure, blood sugar, body temperature and weight. They choose an area of the island with the best Internet reception and set up a makeshift(临时凑合的) medical center which consists of plastic stools and small tables borrowed from the locals' homes, a tent in case of rain and a sheet that is strung up to give the patients privacy during their session.",
+        "Launched in October 2018, TD has eight centers in towns and villages across rural Bangladesh and on three islands. It is funded by a nonprofit organization founded by Bangladeshi entrepreneurs, finance and technology professionals. Inside the center, the laptop screen lights up to reveal Dr. Tina Mustahid, TD's head physician, live-streamed(网络直播) from the capital city of Dhaka for free remote medical consultations. Affectionately called Doctor Apa—\"older sister\" in Bengali—by her patients, she is one of three volunteer doctors at TD.",
+        "\"I diagnose them through conversation,\" says Dr. Mustahid. \"Sometimes it's really obvious things that local doctors don't have the patience to talk through with their patients. For example, a common complaint mothers come in with is that their children refuse to eat their meals. The mothers are concerned they are dealing with indigestion, but it's because they are feeding the children packaged chips which are cheap and convenient. I tell them it is ruining their appetite and ask them to cut back on unhealthy snacks.\" Dr. Mustahid says building awareness about health and nutrition is important for island patients who are cut off from mainland resources.",
+        "Even off the islands, Bangladesh faces a critical deficit of health services. The country has half the doctors-per-person ratio recommended by the World Health Organization: roughly one doctor per 2,000 people, instead of one doctor per 1,000 people. And of those physicians, many are concentrated in cities: 70% of the country's population live in rural areas, yet less than 20% of health workers practice there. Over 70% of TD's 3,000 patients are female, in part because many are not comfortable speaking with local doctors who tend to be male. The rural women are mostly not literate or confident enough to travel on their own to the nearest town to visit medical facilities. Many have spent their entire lives rebuilding their homes when the islands flood. Early marriage and young motherhood, which are prevalent in these parts of Bangladesh, also contribute to the early onset of health problems.",
+        "For most TD patients on the islands, Dr. Mustahid is the first big-city doctor that they've ever consulted. TD doctors are not meant to treat serious illnesses or conditions that require a doctor to be physically present, such as pregnancy. But they can write prescriptions, diagnose common ailments—including digestive issues, joint pain, skin diseases, fever and the common cold—and refer patients to doctors at local hospitals. The visit is also an opportunity for the patients, especially women, to air their concerns about aging, motherhood and reproductive health according to Dr. Mustahid. The doctors also offer health, dietary and lifestyle advice where necessary, including insight on everything from recognizing postnatal(产后的) depression to daily exercise. Dr. Mustahid regularly recommends her patients to take a daily thirty-minute morning walk before the sun gets too intense.",
+        "After a few sessions about general health issues Fazila finally opened up about something else that was bothering her: her persistent skin condition. It can get expensive to travel to the doctor, so usually the women living on the islands describe their illness to their husbands. The husbands then go to the pharmacy, try to describe the issue and return home with some random medicines. Nothing worked for Fazila until she started seeing Dr. Apa.",
+        "Other nonprofits are also starting to provide health services on the islands. A local non-governmental organization called Friendship operates floating boat hospitals that provide health services to islands all over Bangladesh, docking at each for two months at a time. Friendship also runs satellite clinics in which one doctor and one clinic aide who are residents of the community disperse health and hygiene information.",
+        "TD still has a few major challenges. Many residents complain the medicines they are prescribed are sometimes unaffordable, but the government isn't doing enough for them. Patients often ask why the medicine isn't free along with the consultation from the doctors. The organizations are linked to local pharmacies and offer discounts to the patients and make sure to prescribe the most cost-effective brands, but still many residents can't afford even that.",
+        "Nevertheless, TD's remote consultations seem to be popular: Of 3,000 patients, at least 200 have returned for follow-ups, according to TD. The reason, explains one resident, might be the simple gesture of treating the island inhabitants with respect. \"Dr. Apa is patient,\" he says, \"At government hospitals, the doctors treat us very badly, but here they listen to us, I can repeat myself many times and no one gets annoyed.\""
+      ],
+      "paragraph_count": 11,
+      "word_count": 1183
+    },
+    {
+      "id": "2022-06-1/part3-section-c-1",
+      "set_id": "2022-06-1",
+      "slug": "part3-section-c-1",
+      "title": "Colleges Make America Stronger",
+      "section": "仔细阅读1",
+      "part": "Part III Section C",
+      "genre": "议论文",
+      "cefr": "C1",
+      "source_note": "2018年1月16日刊登在U.S.News& World Report(《美国新闻与世界报道》)上一篇标题为“Colleges Make America Stronger”(《大学使美国更强大》)的文章。",
+      "key_words": [
+        "refute",
+        "endowment",
+        "spur",
+        "assault"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part3-section-c-1/",
+      "paragraphs": [
+        "Selective colleges and universities in the U.S. are under fire for being too elite and too expensive, and for not training graduates for the world of work. Such charges ignore the fact that these institutions continue to prepare students for success in their work, for thoughtful engagement in civic life, for lifelong learning, and for understanding the world and those with whom they live.",
+        "These colleges and universities must be doing something right. Applications are at record highs, and their financial aid programs make them more accessible than ever. This model of education has long played a central role in creating opportunity, driving economic growth, and spurring innovation.",
+        "Yet, there is growing skepticism about the value of this model. The recent tax reform bill is a wake-up call that our strongest colleges and universities are under assault by some in government. The initial proposals would have made education unaffordable for many by taxing tuition waivers for graduate students and ending deductions for student loan interest. Thankfully, these provisions were ultimately stripped from the bill, but lawmakers let stand a new tax on the investment income of some colleges and universities.",
+        "While these attacks are motivated by misguided ideas, we need to do a better job of explaining why these claims are false and why what we do is valuable. We cannot take for granted that any of this is obvious.",
+        "It is often said that elite colleges and universities do not train students, particularly those who study the liberal arts, for the workforce. But this can be refuted by scholarly research. The data are clear: a liberal arts education is great career preparation, both for excellent lifetime earnings and for satisfaction with the work. This education develops the skills of critical thinking, rigorous analysis of data and facts, communication with the written and spoken word, understanding of cultural differences and issues, and the ability to keep learning. In fact, liberal arts graduates do extremely well in every imaginable field.",
+        "Access to an education at selective colleges and universities is now more available than ever to low- and middle-income families. We have built endowments from donations by alumni(校友) and parents who understand and appreciate our mission to provide access and opportunity, and a significant portion of the returns from these endowments is used to fund financial aid.",
+        "Ironically, the new tax on endowments drains financial aid funds from the very schools most able to offer opportunity to those who have earned a spot but cannot otherwise afford this education. Beyond the virtue of access to those who have earned a place at these schools, the diversity of economic backgrounds enhances the education and experience of all of our students."
+      ],
+      "paragraph_count": 7,
+      "word_count": 451
+    },
+    {
+      "id": "2022-06-1/part3-section-c-2",
+      "set_id": "2022-06-1",
+      "slug": "part3-section-c-2",
+      "title": "We Can't Trust Common Sense But We Can Trust Science",
+      "section": "仔细阅读2",
+      "part": "Part III Section C",
+      "genre": "议论文",
+      "cefr": "C1",
+      "source_note": "2016年2月2日刊登在 phys.org网站上一篇标题为“We Can't Trust Common Sense But We Can Trust Science”(《我们无法相信常识,但我们可以相信科学》)的文章。",
+      "key_words": [
+        "internalize",
+        "susceptible",
+        "rigorous",
+        "outstanding"
+      ],
+      "url": "https://english-exam.lazynote.cn/cet6/articles/2022-06-1/part3-section-c-2/",
+      "paragraphs": [
+        "When a group of Australians was asked why they believed climate change was not happening, about 36% said it was \"common sense\", according to a report published last year by the Commonwealth Scientific and Industrial Research Organization. This was the most popular reason for their opinion, with only 11% saying their belief that climate change was not happening was based on scientific research.",
+        "But what do we mean by an appeal to common sense? Presumably it's an appeal to rationality of some sort that forms the basis of more complex reasoning. The appeal to common sense, however, is usually nothing more than an appeal to thinking that just feels right, but what feels right to one person may not feel right to another. Whether it feels right is usually a reflection of the world view and ideologies we have internalised, and that frames how we interact with new ideas. When new ideas are in accord with what we already believe, they are more readily accepted. When they are not, they, and the arguments that lead to them, are more readily rejected.",
+        "We often mistake this automatic compatibility testing of new ideas with existing beliefs as an application of common sense, but, in reality, it is more about judging than thinking. As Nobelist Daniel Kahneman notes in Thinking, Fast and Slow, when we arrive at conclusions in this way, the outcomes also feel true, regardless of whether they are. We are not psychologically well equipped to judge our own thinking.",
+        "We are also highly susceptible to a range of cognitive biases such as giving preference to the first things that come to mind when making decisions or giving weight to evidence.",
+        "One way we can check our internal biases and inconsistencies is through the social verification of knowledge, in which we test our ideas in a rigorous and systematic way to see if they make sense not just to us, but to other people. The outstanding example of this socially shared cognition is science.",
+        "That does not mean that individuals are not capable of excellent thinking, nor does it mean no individual is rational. But the extent to which individuals can do this on their own is a function of how well integrated they are with communities of systematic inquiry in the first place. You can't learn to think well by yourself.",
+        "In matters of science at least, those who value their common sense over methodological, collaborative investigation imagine themselves to be more free in their thinking, unbound by involvement with the group, but in reality they are tightly bound by their capabilities and perspectives. We are smarter together than we are individually, and perhaps that's just common sense."
+      ],
+      "paragraph_count": 7,
+      "word_count": 446
+    }
+  ]
+}
