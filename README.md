@@ -4,6 +4,11 @@
 
 ## 现在就能用
 
+最省事：直接双击根目录的 **`CET6-词书.html`**。它是单文件版，CSS、JavaScript 和全部词书数据都已内嵌，不需要启动服务器。
+学习记录与浏览器和文件路径有关；移动文件、换浏览器或清理缓存前，先在「数据 → 导出备份」保存 JSON。
+
+如果浏览器对 `file://` 本地存储限制较多，再用服务器版：
+
 ```bash
 cd /home/wsa/英语六级学习
 ./start.sh
@@ -60,6 +65,7 @@ python3 scripts/fetch_reference.py
 python3 scripts/fetch_pdfs.py
 python3 scripts/build_data.py
 python3 scripts/build_site.py
+python3 scripts/build_single_html.py
 python3 scripts/validate_data.py
 node --check site/assets/app.js
 ```
@@ -67,6 +73,7 @@ node --check site/assets/app.js
 重建数据还需要系统里的 `pdftotext`（Poppler）和 `python3 -m pip install -r requirements.txt`。
 
 `data/raw/` 是下载缓存，不提交 git；`data/corpus/`、`data/words.json` 和 `site/data.js` 是可复现产物。
+`CET6-词书.html` 是面向双击使用的打包产物。
 
 ## Git
 

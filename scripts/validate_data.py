@@ -78,6 +78,13 @@ def main() -> None:
     site_data = ROOT / "site" / "data.js"
     if not site_data.exists() or "window.CET6_DATA=" not in site_data.read_text(encoding="utf-8")[:100]:
         fail("site/data.js missing or malformed")
+    single_html = ROOT / "CET6-词书.html"
+    if single_html.exists():
+        single_text = single_html.read_text(encoding="utf-8")
+        if "<script src=" in single_text or "<link rel=\"stylesheet\"" in single_text:
+            fail("single-file HTML still contains external dependencies")
+        if "window.CET6_DATA=" not in single_text:
+            fail("single-file HTML missing embedded data")
 
     print("PASS")
     print(f"sets={len(DATA['sets'])} articles={len(articles)} words={len(words)} core={len(core)}")
@@ -86,6 +93,8 @@ def main() -> None:
     print(f"missing_top={missing.most_common(12)}")
     print(f"plan_days={len(plan)} plan_range={plan[0]['date']}..{plan[-1]['date']}")
     print(f"site_data={site_data.stat().st_size / 1024 / 1024:.1f} MiB")
+    if single_html.exists():
+        print(f"single_html={single_html.stat().st_size / 1024 / 1024:.1f} MiB")
     print(f"wordbook_meta_core={meta['core_count']} word_count={meta['word_count']}")
 
 
