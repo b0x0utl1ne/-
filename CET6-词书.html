@@ -1551,7 +1551,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       version: 1,
       words: {},
       days: {},
-      settings: { theme: "auto", newPerDay: 25 },
+      settings: { theme: "auto", newPerDay: 25, voice: "aria" },
       streak: { current: 0, best: 0, lastStudy: "" },
     };
   }
@@ -2719,6 +2719,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         <section class="card card-pad">
           <h3 style="margin:0 0 14px;font:700 17px var(--serif)">设置</h3>
           <div class="settings-row"><div><b>每天新词</b><span>精读日生效，建议 20–30</span></div><div class="segmented" data-role="new-per-day">${[20,25,30].map((n) => `<button type="button" data-value="${n}" class="${store.settings.newPerDay === n ? "active" : ""}">${n}</button>`).join("")}</div></div>
+          <div class="settings-row"><div><b>发音</b><span>优先 Edge 自然神经语音，切换即试听</span></div><div class="segmented" data-role="voice-preset">${[["aria","Aria 美"],["sonia","Sonia 英"],["auto","自动"]].map(([value, label]) => `<button type="button" data-value="${value}" class="${(store.settings.voice || "aria") === value ? "active" : ""}">${label}</button>`).join("")}</div></div>
           <div class="settings-row"><div><b>主题</b><span>自动跟随系统 / 手选</span></div><div class="segmented" data-role="theme-mode">${["auto","light","dark"].map((mode) => `<button type="button" data-value="${mode}" class="${store.settings.theme === mode ? "active" : ""}">${mode === "auto" ? "自动" : mode === "light" ? "浅色" : "深色"}</button>`).join("")}</div></div>
           <div class="settings-row"><div><b>到期词</b><span>每天打开时自动计算</span></div><span class="pill pill-gold">${due} 个</span></div>
           <div class="data-actions" style="margin-top:16px">
@@ -2929,18 +2930,89 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     }, 2200);
   }
 
-  function speakWord(id) {
+  let cachedVoices = [];
+  let voicesPromise = null;
+
+  function loadVoices() {
+    if (!("speechSynthesis" in window)) return Promise.resolve([]);
+    const current = speechSynthesis.getVoices();
+    if (current.length) {
+      cachedVoices = current;
+      return Promise.resolve(current);
+    }
+    if (voicesPromise) return voicesPromise;
+    voicesPromise = new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        cachedVoices = speechSynthesis.getVoices();
+        resolve(cachedVoices);
+      };
+      speechSynthesis.addEventListener("voiceschanged", finish, { once: true });
+      setTimeout(finish, 1400);
+    });
+    return voicesPromise;
+  }
+
+  function pickVoice(voices, preset) {
+    const englishNatural = voices.filter(
+      (voice) => /^en-(US|GB)$/i.test(voice.lang) && /natural/i.test(voice.name),
+    );
+    const presetNames = {
+      aria: "Aria",
+      sonia: "Sonia",
+      ryan: "Ryan",
+      jenny: "Jenny",
+    };
+    const wanted = presetNames[preset] || "";
+    if (wanted) {
+      const exact = englishNatural.find((voice) => voice.name.includes(wanted));
+      if (exact) return exact;
+    }
+    for (const name of ["Aria", "Jenny", "Ava", "Emma", "Sonia", "Ryan", "Libby"]) {
+      const voice = englishNatural.find((item) => item.name.includes(name));
+      if (voice) return voice;
+    }
+    return (
+      voices.find((voice) => /^en-US$/i.test(voice.lang))
+      || voices.find((voice) => /^en-GB$/i.test(voice.lang))
+      || voices.find((voice) => /^en/i.test(voice.lang))
+      || null
+    );
+  }
+
+  async function speakWord(id) {
     const word = WORD_BY_ID.get(id);
     if (!word) return;
     if (!("speechSynthesis" in window)) {
       toast("当前浏览器不支持朗读");
       return;
     }
+    const voices = await loadVoices();
+    const voice = pickVoice(voices, store.settings.voice || "aria");
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(word.lemma.replace(/-/g, " "));
-    utterance.lang = "en-US";
-    utterance.rate = 0.82;
+    if (voice) {
+      utterance.voice = voice;
+      utterance.lang = voice.lang;
+    } else {
+      utterance.lang = store.settings.voice === "sonia" ? "en-GB" : "en-US";
+    }
+    utterance.rate = 0.9;
     utterance.pitch = 1;
+    utterance.volume = 1;
+    let fellBack = false;
+    utterance.onerror = (event) => {
+      if (fellBack || event.error === "canceled" || event.error === "interrupted") return;
+      fellBack = true;
+      toast("自然语音暂不可用，已切到系统语音");
+      const fallback = new SpeechSynthesisUtterance(word.lemma.replace(/-/g, " "));
+      fallback.lang = "en-US";
+      fallback.rate = 0.9;
+      fallback.pitch = 1;
+      speechSynthesis.speak(fallback);
+    };
     speechSynthesis.speak(utterance);
   }
 
@@ -3311,22 +3383,6 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       if (close.dataset.close === "wordModal") closeWordModal();
       if (close.dataset.close === "searchModal") closeSearch();
     });
-    document.addEventListener("change", (event) => {
-      const newPerDay = event.target.closest("[data-role='new-per-day'] button");
-      if (newPerDay) {
-        store.settings.newPerDay = Number(newPerDay.dataset.value);
-        saveStore();
-        render();
-        toast(`每天新词改为 ${store.settings.newPerDay} 个`);
-      }
-      const themeMode = event.target.closest("[data-role='theme-mode'] button");
-      if (themeMode) {
-        store.settings.theme = themeMode.dataset.value;
-        saveStore();
-        applyTheme();
-        toast("主题已更新");
-      }
-    });
     // Segmented controls use buttons, not form controls, so listen separately.
     document.addEventListener("click", (event) => {
       const newPerDay = event.target.closest("[data-role='new-per-day'] button");
@@ -3343,6 +3399,15 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         saveStore();
         applyTheme();
         toast("主题已更新");
+        return;
+      }
+      const voicePreset = event.target.closest("[data-role='voice-preset'] button");
+      if (voicePreset) {
+        store.settings.voice = voicePreset.dataset.value;
+        saveStore();
+        const labels = { aria: "Aria 美音", sonia: "Sonia 英音", auto: "自动自然语音" };
+        toast(`发音已切换：${labels[store.settings.voice]}`);
+        setTimeout(() => speakWord("resilience"), 40);
       }
     });
     route();
