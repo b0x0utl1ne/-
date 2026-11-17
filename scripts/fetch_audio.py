@@ -31,12 +31,21 @@ def find_curl() -> str:
     return ""
 
 
-def suffix_from(url: str) -> str:
-    path = url.split("?", 1)[0]
-    for ext in (".m4a", ".mp3", ".wav", ".ogg"):
-        if path.lower().endswith(ext):
-            return ext
-    return ".mp3"
+def detect_suffix(path: Path) -> str:
+    """CET通 把 m4a 内容挂在 .mp3 名字下，按文件头纠正扩展名。"""
+    head = path.read_bytes()[:12]
+    if len(head) >= 8 and head[4:8] == b"ftyp":
+        return ".m4a"
+    if head[:3] == b"ID3" or head[:1] == b"\xff":
+        return ".mp3"
+    return ""
+
+
+def existing_for(set_id: str) -> Path | None:
+    for path in AUDIO.glob(f"{set_id}.*"):
+        if path.suffix != ".download" and path.stat().st_size > 1024 * 1024:
+            return path
+    return None
 
 
 def download(url: str, target: Path, curl: str) -> None:
@@ -67,28 +76,36 @@ def main() -> None:
     data = json.loads(META.read_text(encoding="utf-8"))
 
     for section in data.get("sets", []):
+        set_id = section["id"]
         url = section.get("audio_url") or ""
-        if not url.startswith("http"):
-            print(f"skip {section['id']}: already local ({url})")
-            continue
-        name = f"{section['id']}{suffix_from(url)}"
-        target = AUDIO / name
-        if target.exists() and target.stat().st_size > 1024 * 1024:
-            print(f"keep {name} ({target.stat().st_size / 1024 / 1024:.1f} MB)")
-        else:
-            print(f"download {name} ...")
+        local = existing_for(set_id)
+        if local is None and url.startswith("http"):
+            print(f"download {set_id} ...")
+            tmp = AUDIO / f"{set_id}.download"
             try:
-                download(url, target, curl)
-                print(f"  saved {target.stat().st_size / 1024 / 1024:.1f} MB")
+                download(url, tmp, curl)
             except Exception as exc:  # noqa: BLE001 - report and keep the old URL
                 print(f"  FAILED: {exc}")
+                tmp.unlink(missing_ok=True)
                 continue
-        section["audio_url"] = f"audio/{name}"
+            local = tmp
+        if local is None:
+            print(f"missing {set_id}: no local file and no remote URL")
+            continue
+
+        suffix = detect_suffix(local) or local.suffix
+        final = AUDIO / f"{set_id}{suffix}"
+        if local != final:
+            if final.exists():
+                final.unlink()
+            local.rename(final)
+        print(f"keep {final.name} ({final.stat().st_size / 1024 / 1024:.1f} MB)")
+        section["audio_url"] = f"audio/{final.name}"
 
     META.write_text(
         json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
     )
-    total = sum(item.stat().st_size for item in AUDIO.glob("*"))
+    total = sum(item.stat().st_size for item in AUDIO.glob("*") if item.is_file())
     print(f"done: {total / 1024 / 1024:.1f} MB in {AUDIO}")
 
 
