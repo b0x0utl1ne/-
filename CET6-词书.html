@@ -1662,6 +1662,51 @@ kbd {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
 }
 
+/* ---------- 背诵库 ---------- */
+.text-input,
+.text-area {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 14px/1.6 var(--sans);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.text-area { resize: vertical; min-height: 130px; }
+.text-input:focus,
+.text-area:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.deck-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.deck-list { display: grid; gap: 12px; margin-top: 16px; }
+.deck-card { padding: 18px 20px; }
+.deck-card-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.deck-card-main h3 { margin: 0 0 6px; font: 700 17px var(--serif); }
+.deck-card-main p { margin: 0; color: var(--muted); font-size: 12px; }
+.deck-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.deck-bar { margin-top: 14px; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.deck-bar span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+
+@media (max-width: 720px) {
+  .deck-card-main { flex-direction: column; }
+}
+
+/* ---------- 例句中文 ---------- */
+.ctx-cn { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-top: 6px; }
+.cn-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: 600 11px/1 var(--sans);
+  padding: 4px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: .5px;
+}
+.cn-btn:hover { color: var(--accent); border-color: var(--accent); }
+.cn-body { flex: 1 1 100%; color: var(--ink); font-size: 13px; line-height: 1.7; opacity: .92; }
+.cn-body[hidden] { display: none; }
+
 </style>
 </head>
 <body>
@@ -1707,6 +1752,7 @@ kbd {
         <a class="nav-item" href="#/reading" data-nav="reading"><svg class="icon"><use href="#i-text"/></svg><span>语境</span></a>
         <a class="nav-item" href="#/listen" data-nav="listen"><svg class="icon"><use href="#i-volume"/></svg><span>听力</span></a>
         <a class="nav-item" href="#/review" data-nav="review"><svg class="icon"><use href="#i-cards"/></svg><span>复习</span><b class="nav-count nav-count--soft" id="navReview">0</b></a>
+        <a class="nav-item" href="#/decks" data-nav="decks"><svg class="icon"><use href="#i-book"/></svg><span>背诵库</span></a>
         <a class="nav-item" href="#/plan" data-nav="plan"><svg class="icon"><use href="#i-calendar"/></svg><span>计划</span></a>
         <a class="nav-item" href="#/stats" data-nav="stats"><svg class="icon"><use href="#i-chart"/></svg><span>数据</span></a>
       </nav>
@@ -1811,14 +1857,19 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   const WORD_RE = /[A-Za-z]+(?:[-'][A-Za-z]+)*/g;
   const STORAGE_KEY = "cet6-wordbook-v1";
+  // 艾宾浩斯式间隔阶梯：新词 → 1 天 → 2 天 → 4 天 → 7 天 → 15 天 → 30 天 → 60 天
+  const INTERVALS = [0, 1, 2, 4, 7, 15, 30, 60];
+  const EXTRA_BATCH = 50;
   const EXAM = { year: 2026, month: 12, day: 12, label: "2026-12-12" };
-  const VIEWS = ["today", "words", "reading", "listen", "review", "plan", "stats"];
+  const VIEWS = ["today", "words", "reading", "listen", "review", "decks", "study", "plan", "stats"];
   const VIEW_TITLES = {
     today: "今日学习",
     words: "核心词书",
     reading: "真题语境",
     listen: "听力精听",
     review: "复习与测验",
+    decks: "背诵库",
+    study: "背诵练习",
     plan: "29 天计划",
     stats: "学习数据",
   };
@@ -1868,6 +1919,9 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     reviewTab: "due",
     session: null,
     quiz: null,
+    studyDeckId: null,
+    deckSession: null,
+    translateTried: new Set(),
     searchQuery: "",
     context: null,
     longPressTimer: null,
@@ -1878,10 +1932,13 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
 
   function defaultStore() {
     return {
-      version: 1,
+      version: 2,
       words: {},
       days: {},
       listening: { segments: {} },
+      decks: [],
+      cards: {},
+      translations: {},
       settings: { theme: "auto", newPerDay: 25, voice: "aria" },
       streak: { current: 0, best: 0, lastStudy: "" },
     };
@@ -1897,6 +1954,9 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         words: saved.words || {},
         days: saved.days || {},
         listening: { segments: saved.listening?.segments || {} },
+        decks: Array.isArray(saved.decks) ? saved.decks : [],
+        cards: saved.cards && typeof saved.cards === "object" ? saved.cards : {},
+        translations: saved.translations && typeof saved.translations === "object" ? saved.translations : {},
         settings: { ...defaultStore().settings, ...(saved.settings || {}) },
         streak: { ...defaultStore().streak, ...(saved.streak || {}) },
       };
@@ -1992,6 +2052,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         favorite: false,
         due: null,
         interval: 0,
+        stage: 0,
         ease: 2.5,
         lapses: 0,
         reviews: 0,
@@ -2085,6 +2146,30 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     );
   }
 
+  function applySchedule(state, status, today) {
+    const stage = clamp(Number(state.stage) || 0, 0, INTERVALS.length - 1);
+    if (status === "familiar") {
+      state.stage = Math.min(stage + 1, INTERVALS.length - 1);
+      state.interval = INTERVALS[state.stage];
+      state.due = addDays(today, state.interval);
+    } else if (status === "fuzzy") {
+      state.stage = Math.max(0, stage - 2);
+      state.interval = INTERVALS[state.stage];
+      state.due = addDays(today, state.interval);
+    } else {
+      state.stage = 0;
+      state.interval = 0;
+      // 陌生词当天就回到队列：今天学的，今天还能再练一次
+      state.due = today;
+      state.lapses = (state.lapses || 0) + 1;
+    }
+  }
+
+  function dueLabel(state) {
+    if (state.due === todayKey()) return "今天再练一次";
+    return `${state.interval || 0} 天后复习`;
+  }
+
   function markWord(id, status, options = {}) {
     const word = WORD_BY_ID.get(id);
     if (!word) return;
@@ -2097,6 +2182,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       state.status = "new";
       state.due = null;
       state.interval = 0;
+      state.stage = 0;
       state.lastReview = new Date().toISOString();
       saveStore();
       toast(`已取消「${word.lemma}」的标记`);
@@ -2109,19 +2195,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       getDay(today).newCount += 1;
     }
 
-    if (status === "familiar") {
-      state.interval = state.reviews
-        ? Math.min(30, Math.max(7, Math.round((state.interval || 7) * 2.1)))
-        : 7;
-      state.due = addDays(today, state.interval);
-    } else if (status === "fuzzy") {
-      state.interval = 3;
-      state.due = addDays(today, 3);
-    } else if (status === "unfamiliar") {
-      state.interval = 1;
-      state.due = addDays(today, 1);
-      state.lapses = (state.lapses || 0) + 1;
-    }
+    applySchedule(state, status, today);
     state.status = status;
     state.reviews = (state.reviews || 0) + 1;
     state.lastReview = new Date().toISOString();
@@ -2129,9 +2203,9 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     touchStudy();
     saveStore();
     refreshWordUI(id);
-    if (status === "familiar") toast(`「${word.lemma}」标为熟悉，${state.interval} 天后再见`);
-    if (status === "unfamiliar") toast(`「${word.lemma}」已加入陌生队列`);
-    if (status === "fuzzy") toast(`「${word.lemma}」标为模糊，3 天后复习`);
+    if (status === "familiar") toast(`「${word.lemma}」标为熟悉，${dueLabel(state)}`);
+    if (status === "unfamiliar") toast(`「${word.lemma}」已加入今日加强，今天还能再练`);
+    if (status === "fuzzy") toast(`「${word.lemma}」标为模糊，${dueLabel(state)}`);
   }
 
   function toggleFavorite(id) {
@@ -2176,6 +2250,379 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
 
   function newQueue() {
     return CORE.filter((word) => statusOf(word.id) === "new");
+  }
+
+  function newLearnedToday() {
+    const today = todayKey();
+    return CORE.filter((word) => wordState(word.id)?.learnedOn === today).length;
+  }
+
+  function reinforcedToday() {
+    const today = todayKey();
+    return CORE.filter((word) => {
+      const state = wordState(word.id);
+      return Boolean(
+        state
+        && state.learnedOn === today
+        && (state.status === "unfamiliar" || state.status === "fuzzy"),
+      );
+    });
+  }
+
+  // ---------- 背诵库：CET-6 之外的通用卡组 ----------
+  function deckById(id) {
+    return (store.decks || []).find((deck) => deck.id === id) || null;
+  }
+
+  function cardKey(deckId, itemId) {
+    return `${deckId}::${itemId}`;
+  }
+
+  function cardState(deckId, itemId) {
+    return (store.cards && store.cards[cardKey(deckId, itemId)]) || null;
+  }
+
+  function ensureCardState(deckId, itemId) {
+    if (!store.cards) store.cards = {};
+    const key = cardKey(deckId, itemId);
+    if (!store.cards[key]) {
+      store.cards[key] = {
+        status: "new",
+        due: null,
+        interval: 0,
+        stage: 0,
+        lapses: 0,
+        reviews: 0,
+        learnedOn: null,
+        lastReview: null,
+      };
+    }
+    return store.cards[key];
+  }
+
+  function deckStats(deck) {
+    const today = todayKey();
+    let learned = 0;
+    let due = 0;
+    let fresh = 0;
+    for (const item of deck.items || []) {
+      const state = cardState(deck.id, item.id);
+      if (!state || !state.learnedOn) {
+        fresh += 1;
+      } else {
+        learned += 1;
+        if (state.due && state.due <= today) due += 1;
+      }
+    }
+    return { total: (deck.items || []).length, learned, due, fresh };
+  }
+
+  function deckQueue(deck) {
+    const today = todayKey();
+    const due = [];
+    const fresh = [];
+    for (const item of deck.items || []) {
+      const state = cardState(deck.id, item.id);
+      if (!state || !state.learnedOn) fresh.push(item);
+      else if (state.due && state.due <= today) due.push(item);
+    }
+    const batch = Math.max(1, store.settings.newPerDay || 25);
+    return due.concat(fresh.slice(0, batch));
+  }
+
+  function newCardId() {
+    return `card-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+  }
+
+  function parseDeckText(text) {
+    const raw = String(text || "").trim();
+    if (!raw) return [];
+    if (raw.startsWith("[") || raw.startsWith("{")) {
+      try {
+        const parsed = JSON.parse(raw);
+        const list = Array.isArray(parsed) ? parsed : parsed.cards || parsed.items || [];
+        return list
+          .map((entry) => ({
+            id: newCardId(),
+            front: String(entry.front ?? entry.word ?? entry.q ?? entry.term ?? "").trim(),
+            back: String(entry.back ?? entry.definition ?? entry.a ?? entry.note ?? "").trim(),
+          }))
+          .filter((entry) => entry.front);
+      } catch {
+        return [];
+      }
+    }
+    const items = [];
+    for (const line of raw.split(/\r?\n/)) {
+      const row = line.trim();
+      if (!row) continue;
+      let parts = row.split("\t");
+      if (parts.length < 2) parts = row.split("|");
+      if (parts.length < 2) parts = row.split("｜");
+      if (parts.length < 2 && row.includes(",")) {
+        const index = row.indexOf(",");
+        parts = [row.slice(0, index), row.slice(index + 1)];
+      }
+      const front = (parts[0] || "").trim();
+      const back = (parts[1] || "").trim();
+      if (!front) continue;
+      items.push({ id: newCardId(), front, back });
+    }
+    return items;
+  }
+
+  function createDeck(name, items) {
+    const deck = {
+      id: `deck-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+      name: String(name || "").trim() || "未命名卡组",
+      createdAt: new Date().toISOString(),
+      items,
+    };
+    store.decks.push(deck);
+    saveStore();
+    return deck;
+  }
+
+  function deleteDeck(deckId) {
+    const deck = deckById(deckId);
+    if (!deck) return;
+    if (!confirm(`删除「${deck.name}」？卡组和它的学习记录都会清掉。`)) return;
+    store.decks = (store.decks || []).filter((item) => item.id !== deckId);
+    for (const item of deck.items || []) {
+      if (store.cards) delete store.cards[cardKey(deckId, item.id)];
+    }
+    if (ui.studyDeckId === deckId) {
+      ui.studyDeckId = null;
+      ui.deckSession = null;
+    }
+    saveStore();
+    toast(`已删除「${deck.name}」`);
+    render();
+  }
+
+  function exportDeck(deckId) {
+    const deck = deckById(deckId);
+    if (!deck) return;
+    const payload = {
+      app: "cet6-wordbook-deck",
+      version: 1,
+      name: deck.name,
+      cards: (deck.items || []).map((item) => ({ front: item.front, back: item.back })),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${deck.name.replace(/[\\/:*?"<>|]/g, "_")}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast("卡组已导出");
+  }
+
+  function createDeckFromForm() {
+    const items = parseDeckText($("#deckText")?.value || "");
+    if (!items.length) {
+      toast("没有解析到卡片，检查每行是否有正面和背面");
+      return;
+    }
+    const deck = createDeck($("#deckName")?.value || "", items);
+    toast(`「${deck.name}」已创建，${items.length} 张卡`);
+    go("decks");
+  }
+
+  function importDeckFile(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const raw = String(reader.result || "");
+      const items = parseDeckText(raw);
+      if (!items.length) {
+        toast("导入失败：没有可用的卡片");
+        return;
+      }
+      let name = file.name.replace(/\.[^.]+$/, "");
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && !Array.isArray(parsed) && parsed.name) name = String(parsed.name);
+      } catch {
+        /* plain text file */
+      }
+      const deck = createDeck(name, items);
+      toast(`已导入「${deck.name}」${items.length} 张`);
+      render();
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+  }
+
+  function startDeck(deckId) {
+    const deck = deckById(deckId);
+    if (!deck) return;
+    const queue = deckQueue(deck);
+    ui.studyDeckId = deckId;
+    ui.deckSession = queue.length
+      ? {
+        deckId,
+        queue,
+        index: 0,
+        revealed: false,
+        relearned: new Set(),
+        stats: { remember: 0, fuzzy: 0, forget: 0 },
+      }
+      : null;
+    go("study");
+  }
+
+  function revealDeckCard() {
+    if (!ui.deckSession) return;
+    ui.deckSession.revealed = true;
+    render();
+  }
+
+  function skipDeckCard() {
+    if (!ui.deckSession) return;
+    ui.deckSession.index += 1;
+    ui.deckSession.revealed = false;
+    render();
+  }
+
+  function gradeDeckCard(grade) {
+    const session = ui.deckSession;
+    if (!session || !session.revealed) return;
+    const item = session.queue[session.index];
+    if (!item) return;
+    const state = ensureCardState(session.deckId, item.id);
+    const today = todayKey();
+    const status = grade === "remember" ? "familiar" : grade === "fuzzy" ? "fuzzy" : "unfamiliar";
+    if (!state.learnedOn) state.learnedOn = today;
+    applySchedule(state, status, today);
+    state.status = status;
+    state.reviews = (state.reviews || 0) + 1;
+    state.lastReview = new Date().toISOString();
+    session.stats[grade] += 1;
+    if (grade === "forget" && !session.relearned.has(item.id)) {
+      session.relearned.add(item.id);
+      session.queue.push(item);
+    }
+    touchStudy();
+    saveStore();
+    session.index += 1;
+    session.revealed = false;
+    render();
+  }
+
+  function renderDecks() {
+    const decks = store.decks || [];
+    const rows = decks.map((deck) => {
+      const stats = deckStats(deck);
+      const percent = stats.total ? Math.round((stats.learned / stats.total) * 100) : 0;
+      return `
+        <article class="card deck-card">
+          <div class="deck-card-main">
+            <div>
+              <h3>${esc(deck.name)}</h3>
+              <p>${stats.total} 张 · 已学 ${stats.learned} · 待复习 ${stats.due} · 未学 ${stats.fresh}</p>
+            </div>
+            <div class="deck-card-actions">
+              <button class="btn btn-primary btn-sm" type="button" data-action="start-deck" data-deck="${escAttr(deck.id)}">${stats.total ? "开始背诵" : "空卡组"}</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-action="export-deck" data-deck="${escAttr(deck.id)}">导出</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-action="delete-deck" data-deck="${escAttr(deck.id)}">删除</button>
+            </div>
+          </div>
+          <div class="deck-bar"><span style="width:${percent}%"></span></div>
+        </article>
+      `;
+    }).join("");
+
+    return `
+      ${viewHead("DECKS · 通用背诵", "背诵库", "六级词书之外的内容放这里：单词、名词解释、法条、古诗、面试题，一行一张卡。")}
+      <section class="card card-pad">
+        <div class="card-head" style="padding:0 0 14px;border:0">
+          <div><h3>新建 / 导入</h3><p>每行一张卡，用 Tab 或竖线分隔正面和背面</p></div>
+        </div>
+        <input class="text-input" id="deckName" type="text" placeholder="卡组名称，例如：考研核心词 / 病理名词解释" maxlength="40">
+        <textarea class="text-area" id="deckText" rows="7" placeholder="abandon	放弃，抛弃
+resilience	韧性，恢复力
+心肌梗死	冠状动脉急性闭塞导致的心肌坏死"></textarea>
+        <div class="deck-form-actions">
+          <button class="btn btn-primary btn-sm" type="button" data-action="create-deck">创建卡组</button>
+          <button class="btn btn-soft btn-sm" type="button" data-action="import-deck">从 JSON 导入</button>
+          <input type="file" id="deckFile" accept="application/json,.json,.txt" hidden>
+          <span class="small muted">JSON 格式：[{"front":"词","back":"释义"}]</span>
+        </div>
+      </section>
+      <div class="deck-list">
+        ${rows || `<div class="empty-state"><div class="empty-icon">${icon("book")}</div><h3>还没有卡组</h3><p>在上面填名称和内容，建第一个。</p></div>`}
+      </div>
+    `;
+  }
+
+  function renderStudy() {
+    const deck = deckById(ui.studyDeckId);
+    if (!deck) {
+      return `<div class="empty-state"><div class="empty-icon">${icon("book")}</div><h3>没有选择卡组</h3><p>先去背诵库建一个，或选一个已有的。</p><button class="btn btn-primary btn-lg" type="button" data-action="go" data-view="decks">去背诵库</button></div>`;
+    }
+    const session = ui.deckSession && ui.deckSession.deckId === deck.id ? ui.deckSession : null;
+    if (!session) {
+      const stats = deckStats(deck);
+      const pending = stats.due + Math.min(stats.fresh, store.settings.newPerDay || 25);
+      return `
+        ${viewHead("STUDY · 背诵练习", deck.name, `${stats.total} 张卡 · 待复习 ${stats.due} · 未学 ${stats.fresh}`)}
+        <div class="empty-state">
+          <div class="empty-icon">${icon("cards")}</div>
+          <h3>${stats.total ? `${pending} 张待背` : "卡组是空的"}</h3>
+          <p>先回忆，再揭晓；忘记的卡这一轮末尾会再出现一次。</p>
+          <button class="btn btn-primary btn-lg" type="button" data-action="${stats.total ? "start-deck" : "go"}" ${stats.total ? `data-deck="${escAttr(deck.id)}"` : 'data-view="decks"'}>${stats.total ? "开始背诵" : "回背诵库"}</button>
+          <button class="btn btn-ghost btn-lg" type="button" data-action="go" data-view="decks">回背诵库</button>
+        </div>
+      `;
+    }
+    if (session.index >= session.queue.length) {
+      const total = session.queue.length;
+      const remember = session.stats.remember;
+      const stats = deckStats(deck);
+      return `
+        ${viewHead("STUDY · 背诵练习", deck.name, "这一轮结束了")}
+        <div class="card quiz-card quiz-result">
+          <div class="score">${total ? Math.round((remember / total) * 100) : 0}<span style="font-size:18px">%</span></div>
+          <h3>这一轮走完了</h3>
+          <p>记得 ${remember} · 模糊 ${session.stats.fuzzy} · 忘记 ${session.stats.forget}。还有 ${stats.fresh} 张没学、${stats.due} 张待复习。</p>
+          <div class="hero-actions" style="justify-content:center">
+            <button class="btn btn-primary" type="button" data-action="start-deck" data-deck="${escAttr(deck.id)}">再背一轮</button>
+            <button class="btn btn-soft" type="button" data-action="go" data-view="decks">回背诵库</button>
+          </div>
+        </div>
+      `;
+    }
+    const item = session.queue[session.index];
+    const progress = sessionProgress(session);
+    return `
+      ${viewHead("STUDY · 背诵练习", deck.name, "先回忆，再揭晓")}
+      <div class="review-progress"><span>${session.index + 1} / ${session.queue.length}</span><div class="review-bar"><span style="width:${progress.percent}%"></span></div><span>${esc(deck.name)}</span></div>
+      <article class="flashcard">
+        <div class="flashcard-top">
+          <div><h2 class="flashcard-word">${esc(item.front)}</h2></div>
+          <button class="btn btn-ghost btn-sm" type="button" data-action="go" data-view="decks">退出</button>
+        </div>
+        <div class="flashcard-center">
+          ${session.revealed ? `
+            <p class="flashcard-def">${esc(item.back || "（这张卡没有背面）")}</p>
+            <div class="kbd-hint"><span><kbd>1</kbd> 忘记</span><span><kbd>2</kbd> 模糊</span><span><kbd>3</kbd> 记得</span></div>
+          ` : `
+            <p class="flashcard-hint">先在心里回答，再按空格揭晓。</p>
+            <button class="btn btn-primary btn-lg reveal-btn" type="button" data-action="deck-reveal">${icon("eye")} 显示答案</button>
+          `}
+        </div>
+        <div class="flashcard-actions">
+          ${session.revealed ? `
+            <button class="btn btn-red btn-lg" type="button" data-action="deck-grade" data-grade="forget">忘记 <span class="small">1</span></button>
+            <button class="btn btn-soft btn-lg" type="button" data-action="deck-grade" data-grade="fuzzy">模糊 <span class="small">2</span></button>
+            <button class="btn btn-green btn-lg" type="button" data-action="deck-grade" data-grade="remember">记得 <span class="small">3</span></button>
+          ` : `<button class="btn btn-ghost btn-lg" type="button" data-action="deck-skip">跳过</button>`}
+        </div>
+      </article>
+    `;
   }
 
   function todayPlan() {
@@ -2272,6 +2719,105 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     return `${context.set_label || ""}${context.section ? ` · ${context.section}` : ""}`;
   }
 
+  // ---------- 例句中文翻译：按需翻译并缓存在本机 ----------
+  function sentenceKey(text) {
+    return String(text || "").replace(/\s+/g, " ").trim();
+  }
+
+  function translationFor(text) {
+    const key = sentenceKey(text);
+    if (!key) return "";
+    return (store.translations && store.translations[key]) || "";
+  }
+
+  async function translateSentence(text) {
+    const key = sentenceKey(text);
+    if (!key) return "";
+    const cached = translationFor(key);
+    if (cached) return cached;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000);
+    try {
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(key)}&langpair=en|zh-CN`;
+      const response = await fetch(url, { signal: controller.signal });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const zh = String(payload?.responseData?.translatedText || "").trim();
+      if (!zh) throw new Error("empty translation");
+      if (!store.translations) store.translations = {};
+      store.translations[key] = zh;
+      saveStore();
+      return zh;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  function cnBlock(text, auto = false) {
+    const key = sentenceKey(text);
+    if (!key) return "";
+    const cached = translationFor(key);
+    const attr = auto ? ' data-auto="1"' : "";
+    return `<div class="ctx-cn"${attr}>
+      <button class="cn-btn" type="button" data-action="translate-sentence" data-text="${escAttr(key)}"${attr} aria-expanded="${cached ? "true" : "false"}">${cached ? "隐藏中文" : "中 文"}</button>
+      <span class="cn-body" data-key="${escAttr(key)}" title="机器翻译，仅供参考"${cached ? "" : " hidden"}>${esc(cached)}</span>
+    </div>`;
+  }
+
+  function updateTranslationNodes(key, zh) {
+    $$(".cn-body").forEach((node) => {
+      if (node.dataset.key !== key) return;
+      node.textContent = zh;
+      node.hidden = false;
+      const button = node.closest(".ctx-cn")?.querySelector(".cn-btn");
+      if (button) {
+        button.textContent = "隐藏中文";
+        button.setAttribute("aria-expanded", "true");
+      }
+    });
+  }
+
+  async function translateContext(button) {
+    const text = button.dataset.text || "";
+    if (!text) return;
+    const box = button.closest(".ctx-cn");
+    const body = box ? box.querySelector(".cn-body") : null;
+    if (!body) return;
+    const cached = translationFor(text);
+    if (cached) {
+      const show = body.hidden;
+      body.hidden = !show;
+      button.textContent = show ? "隐藏中文" : "中 文";
+      button.setAttribute("aria-expanded", show ? "true" : "false");
+      return;
+    }
+    if (button.dataset.busy === "1") return;
+    button.dataset.busy = "1";
+    button.textContent = "翻译中…";
+    try {
+      const zh = await translateSentence(text);
+      updateTranslationNodes(text, zh);
+    } catch {
+      if (!document.contains(body)) return;
+      body.textContent = "翻译失败：可能被限流或断网，稍后再点一次";
+      body.hidden = false;
+      button.textContent = "重试";
+    } finally {
+      delete button.dataset.busy;
+    }
+  }
+
+  function autoTranslateContext() {
+    if (ui.view !== "review" || !ui.session || !ui.session.revealed) return;
+    const button = $('.ctx-cn[data-auto="1"] [data-action="translate-sentence"]');
+    if (!button) return;
+    const text = button.dataset.text || "";
+    if (!text || translationFor(text)) return;
+    if (ui.translateTried.has(text)) return;
+    ui.translateTried.add(text);
+    translateContext(button);
+  }
+
   function viewHead(kicker, title, subtitle = "", action = "") {
     return `<div class="section-head">
       <div><div class="kicker">${esc(kicker)}</div><h2>${esc(title)}</h2>${subtitle ? `<p>${esc(subtitle)}</p>` : ""}</div>
@@ -2297,6 +2843,11 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       if (segmentId && LISTENING_BY_ID.has(segmentId)) {
         ui.listenSegmentId = segmentId;
       }
+    }
+    if (view === "study") {
+      const params = new URLSearchParams(query);
+      const deckId = params.get("deck");
+      if (deckId && deckById(deckId)) ui.studyDeckId = deckId;
     }
     if (view !== "review") {
       ui.session = null;
@@ -2378,6 +2929,8 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     if (ui.view === "reading") root.innerHTML = renderReading();
     if (ui.view === "listen") root.innerHTML = renderListening();
     if (ui.view === "review") root.innerHTML = renderReview();
+    if (ui.view === "decks") root.innerHTML = renderDecks();
+    if (ui.view === "study") root.innerHTML = renderStudy();
     if (ui.view === "plan") root.innerHTML = renderPlan();
     if (ui.view === "stats") root.innerHTML = renderStats();
     void root.offsetWidth;
@@ -2385,6 +2938,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     bindViewInputs();
     bindListeningAudio();
     updateChrome();
+    autoTranslateContext();
   }
 
   function renderToday() {
@@ -2392,17 +2946,22 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     const due = dueWords();
     const queue = newQueue();
     const target = dailyNewTarget();
-    const newCount = Math.min(target, queue.length);
+    const learnedToday = newLearnedToday();
+    const remainingNew = Math.max(0, target - learnedToday);
+    const newCount = Math.min(remainingNew, queue.length);
+    const extraNew = Math.min(EXTRA_BATCH, queue.length);
+    const reinforce = reinforcedToday();
     const stats = todayStats();
     const readTarget = plan?.article_slugs?.length || 0;
     const readDone = readTarget ? Math.min(stats.readDone, readTarget) : 0;
     const reviewDone = due.length === 0;
-    const newDone = newCount === 0;
+    const newDone = learnedToday >= target;
+    const reinforceDone = reinforce.length === 0;
     const listeningRecommendation = recommendedListening();
     const listeningDoneCount = listeningDoneOn(todayKey());
     const listeningDone = listeningDoneCount > 0;
     const readingDone = readTarget === 0 || readDone >= readTarget;
-    const pct = progressPercent([reviewDone, newDone, listeningDone, readingDone]);
+    const pct = progressPercent([reviewDone, newDone, reinforceDone, listeningDone, readingDone]);
     const days = daysUntilExam();
     const primaryQueue = newCount ? queue : due;
     const featured = primaryQueue[0] || CORE[0];
@@ -2420,7 +2979,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         icon: "cards",
         tone: "accent",
         title: "到期复习",
-        sub: due.length ? `最早到期 ${due[0].due} · 先回忆，再看释义` : "今天没有到期词，保持住",
+        sub: due.length ? `最早到期 ${wordState(due[0].id)?.due || todayKey()} · 先回忆，再看释义` : "今天没有到期词，保持住",
         count: due.length,
         unit: "词",
         action: due.length
@@ -2431,12 +2990,25 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         icon: "book",
         tone: "green",
         title: "今日新词",
-        sub: newCount ? `目标 ${target} 个 · 来自高频与精读推荐` : (target ? "今日新词已完成" : "今天不排新词"),
-        count: newCount,
+        sub: target
+          ? `已学 ${learnedToday} / ${target}${learnedToday >= target ? " · 目标已完成，可继续加练" : ` · 还剩 ${remainingNew} 个`}`
+          : "今天不排新词",
+        count: learnedToday,
+        unit: target ? `/ ${target} 词` : "词",
+        action: queue.length
+          ? `<button class="btn btn-soft btn-sm" data-action="start-new">${learnedToday >= target ? `再学 ${extraNew} 个` : "学新词"}</button>`
+          : `<span class="pill pill-green">${icon("check")} 词库学完</span>`,
+      },
+      {
+        icon: "flame",
+        tone: "accent",
+        title: "今日加强",
+        sub: reinforce.length ? "今天学过的陌生/模糊词，趁热再练一遍" : "今天还没有需要加强的词",
+        count: reinforce.length,
         unit: "词",
-        action: newCount
-          ? `<button class="btn btn-soft btn-sm" data-action="start-new">学新词</button>`
-          : `<span class="pill pill-green">${icon("check")} 已完成</span>`,
+        action: reinforce.length
+          ? `<button class="btn btn-soft btn-sm" data-action="start-reinforce">去加强</button>`
+          : `<span class="pill pill-green">${icon("check")} 无</span>`,
       },
       {
         icon: "text",
@@ -2477,6 +3049,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       <article class="card quote-card">
         <div class="kicker">TODAY'S SENTENCE · 今日一句</div>
         <p class="quote-text">${highlight(featuredContext.text, featuredContext.surface)}</p>
+        ${cnBlock(featuredContext.text)}
         <div class="quote-meta">
           <span>${esc(ctxSource(featuredContext))}${featuredContext.article_title ? ` · ${esc(featuredContext.article_title)}` : ""}</span>
           <button type="button" data-action="open-word" data-word="${escAttr(featured.id)}">${esc(featured.lemma)} →</button>
@@ -2489,10 +3062,10 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         <div class="hero-copy">
           <div class="kicker">${DATA.meta.sets} SETS · ${DATA.meta.corpus_words.toLocaleString()} WORDS · ${CORE.length} CORE</div>
           <h1>把真题读成<br><em>你的词库。</em></h1>
-          <p>不从字母表开始。先用真题语境认出词，再让熟悉、陌生、收藏决定下一次什么时候出现。今天只做四件事：复习到期词、${newCount ? `学 ${newCount} 个新词` : "不排新词"}、精听 1 段听力、读 ${readTarget || 1} 篇原文。</p>
+          <p>不从字母表开始。先用真题语境认出词，再用间隔复习把陌生词拉回来。今天只做五件事：复习到期词、${target ? (newDone ? `加练 ${extraNew} 个新词` : `学 ${newCount} 个新词`) : "不排新词"}、加强今天学过的陌生词、精听 1 段听力、读 ${readTarget || 1} 篇原文。</p>
           <div class="hero-actions">
-            <button class="btn btn-primary btn-lg" data-action="${newCount ? "start-new" : "start-review"}">
-              ${icon("arrow")} ${newCount ? "开始今天的新词" : "进入复习"}
+            <button class="btn btn-primary btn-lg" data-action="${queue.length ? "start-new" : "start-review"}">
+              ${icon("arrow")} ${!target ? "进入复习" : newDone ? `再学 ${extraNew} 个` : "开始今天的新词"}
             </button>
             <button class="btn btn-ghost btn-lg" data-action="${readTarget ? "open-today-reading" : "go"}" ${readTarget ? "" : 'data-view="words"'}>
               ${icon("text")} 打开语境精读
@@ -2518,7 +3091,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         <div class="stack">
           <section class="card">
             <div class="card-head">
-              <div><h3>今天的四件事</h3><p>${esc(dateCN(today))} · ${esc(plan?.focus || "保持复习节奏")}</p></div>
+              <div><h3>今天的五件事</h3><p>${esc(dateCN(today))} · ${esc(plan?.focus || "保持复习节奏")}</p></div>
               <span class="pill pill-ink">${esc(plan?.kind === "study" ? `第 ${plan.part} 组` : plan?.set_label || "今日")}</span>
             </div>
             <div class="task-list">
@@ -2553,10 +3126,10 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
               <div class="progress-ring" style="--p:${pct}"><b>${pct}<small>%</small></b></div>
               <div class="progress-copy">
                 <h3>${pct >= 100 ? "今天的闭环完成了" : "把今天做完再走"}</h3>
-                <p>复习 ${stats.reviewDone} 次 · 新词 ${stats.newDone} 个 · 听力 ${listeningDoneCount} 段 · 精读 ${stats.readDone} 篇</p>
+                <p>复习 ${stats.reviewDone} 次 · 新词 ${stats.newDone} 个 · 加强 ${reinforce.length} 个 · 听力 ${listeningDoneCount} 段 · 精读 ${stats.readDone} 篇</p>
                 <div class="mini-stats">
                   <div class="mini-stat"><b>${due.length}</b><span>到期词</span></div>
-                  <div class="mini-stat"><b>${newCount}</b><span>今日新词</span></div>
+                  <div class="mini-stat"><b>${stats.newDone}</b><span>今日新词</span></div>
                   <div class="mini-stat"><b>${listeningDoneCount}</b><span>已精听</span></div>
                   <div class="mini-stat"><b>${readDone}</b><span>已读文章</span></div>
                 </div>
@@ -2603,7 +3176,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
           </div>
         </div>
         <p class="word-def">${esc(word.definition)}</p>
-        ${context ? `<p class="word-context">${highlight(shorten(context.text, 230), context.surface)}</p>` : ""}
+        ${context ? `<p class="word-context">${highlight(shorten(context.text, 230), context.surface)}</p>${cnBlock(context.text)}` : ""}
         <div class="word-card-foot">
           ${statusPill(word.id)}
           <span class="pill">出现 ${word.doc_freq} 套</span>
@@ -2959,14 +3532,23 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     `;
   }
 
-  function startReview(mode = "due") {
+  function startReview(mode = "due", batch = 0) {
     ui.reviewTab = mode;
     ui.view = "review";
     location.hash = "#/review";
-    const queue = mode === "new" ? newQueue().slice(0, dailyNewTarget()) : dueWords();
     if (mode === "quiz") {
       startQuiz();
       return;
+    }
+    let queue;
+    if (mode === "new") {
+      const remaining = Math.max(0, dailyNewTarget() - newLearnedToday());
+      const size = batch || remaining || (store.settings.newPerDay || 25);
+      queue = newQueue().slice(0, size);
+    } else if (mode === "reinforce") {
+      queue = reinforcedToday();
+    } else {
+      queue = dueWords();
     }
     if (!queue.length) {
       ui.session = null;
@@ -2978,6 +3560,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       queue,
       index: 0,
       revealed: false,
+      relearned: new Set(),
       stats: { remember: 0, fuzzy: 0, forget: 0 },
     };
     ui.quiz = null;
@@ -2987,7 +3570,8 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
   function renderReview() {
     const tabs = [
       ["due", "到期复习", dueWords().length],
-      ["new", "今日新词", Math.min(dailyNewTarget(), newQueue().length)],
+      ["new", "今日新词", `${newLearnedToday()}/${dailyNewTarget()}`],
+      ["reinforce", "今日加强", reinforcedToday().length],
       ["quiz", "语境测验", "10"],
     ];
     const tabHtml = tabs.map(([key, label, count]) => `<button class="review-tab ${ui.reviewTab === key ? "active" : ""}" type="button" data-action="review-tab" data-tab="${key}">${label} <span class="small muted">${count}</span></button>`).join("");
@@ -2995,7 +3579,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     if (ui.reviewTab === "quiz") body = renderQuiz();
     else body = renderFlashSession();
     return `
-      ${viewHead("RECALL · 主动回忆", "复习与测验", "先回忆，再揭晓。答错不是失败，是把下一次间隔拉回今天。")}
+      ${viewHead("RECALL · 主动回忆", "复习与测验", "先回忆，再揭晓。忘记的词当天就回到队列，不用等到明天。")}
       <div class="review-shell">
         <div class="review-tabs">${tabHtml}</div>
         ${body}
@@ -3009,6 +3593,12 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     return { total, index, percent: total ? Math.round((index / total) * 100) : 0 };
   }
 
+  function modeLabel(mode) {
+    if (mode === "new") return "新词";
+    if (mode === "reinforce") return "今日加强";
+    return "到期";
+  }
+
   function renderFlashSession() {
     if (!ui.session || ui.session.mode !== ui.reviewTab) return renderReviewStart();
     const session = ui.session;
@@ -3018,7 +3608,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     const state = wordState(word.id);
     const context = word.context;
     return `
-      <div class="review-progress"><span>${session.mode === "new" ? "新词" : "到期"} ${session.index + 1} / ${session.queue.length}</span><div class="review-bar"><span style="width:${progress.percent}%"></span></div><span>${session.mode === "new" ? "先猜，再揭晓" : "诚实地回忆"}</span></div>
+      <div class="review-progress"><span>${modeLabel(session.mode)} ${session.index + 1} / ${session.queue.length}</span><div class="review-bar"><span style="width:${progress.percent}%"></span></div><span>${session.mode === "new" ? "先猜，再揭晓" : "诚实地回忆"}</span></div>
       <article class="flashcard">
         <div class="flashcard-top">
           <div>
@@ -3033,7 +3623,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         <div class="flashcard-center">
           ${session.revealed ? `
             <p class="flashcard-def">${esc(word.definition)}</p>
-            ${context ? `<blockquote class="flashcard-context">${highlight(context.text, context.surface)}<div class="flashcard-source">${esc(ctxSource(context))}${context.article_title ? ` · ${esc(context.article_title)}` : ""}</div></blockquote>` : ""}
+            ${context ? `<blockquote class="flashcard-context">${highlight(context.text, context.surface)}<div class="flashcard-source">${esc(ctxSource(context))}${context.article_title ? ` · ${esc(context.article_title)}` : ""}</div></blockquote>${cnBlock(context.text, true)}` : ""}
             <div class="kbd-hint"><span><kbd>1</kbd> 忘记</span><span><kbd>2</kbd> 模糊</span><span><kbd>3</kbd> 记得</span></div>
           ` : `
             <p class="flashcard-hint">先在脑中说出意思，再按空格揭晓。不要靠眼熟。</p>
@@ -3053,27 +3643,76 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
 
   function renderReviewStart() {
     const due = dueWords();
-    const newCount = Math.min(dailyNewTarget(), newQueue().length);
+    const target = dailyNewTarget();
+    const learned = newLearnedToday();
+    const queue = newQueue();
+    const remaining = Math.max(0, target - learned);
+    const batch = Math.min(EXTRA_BATCH, queue.length);
+
     if (ui.reviewTab === "new") {
-      if (newCount === 0) {
+      if (!queue.length) {
+        return `
+          <div class="empty-state">
+            <div class="empty-icon">${icon("check")}</div>
+            <h3>核心词已经全部学完</h3>
+            <p>今天已学 ${learned} 个。剩下的时间交给到期复习和真题精读。</p>
+            <button class="btn btn-primary btn-lg" type="button" data-action="start-review">${icon("cards")} 去复习到期词</button>
+          </div>
+        `;
+      }
+      if (target === 0) {
         return `
           <div class="empty-state">
             <div class="empty-icon">${icon("check")}</div>
             <h3>今天不排新词</h3>
-            <p>${todayPlan()?.kind === "mock" || todayPlan()?.kind === "sprint" ? "模考/考前日只做复盘与到期复习。" : "核心词已经全部进入学习队列，继续复习到期词即可。"}</p>
-            <button class="btn btn-primary btn-lg" type="button" data-action="start-review">${icon("cards")} 去复习到期词</button>
+            <p>模考/考前日只做复盘与到期复习。想加练也可以，记录一样会算进今天。</p>
+            <button class="btn btn-primary btn-lg" type="button" data-action="start-new-extra">${icon("arrow")} 加练 ${batch} 个</button>
+          </div>
+        `;
+      }
+      if (remaining === 0) {
+        return `
+          <div class="empty-state">
+            <div class="empty-icon">${icon("check")}</div>
+            <h3>今日目标已完成：${learned} / ${target}</h3>
+            <p>已经学过的词不会丢。点下面的加练会接着往下排，当日累计一起记。</p>
+            <button class="btn btn-primary btn-lg" type="button" data-action="start-new-extra">${icon("arrow")} 再学 ${batch} 个</button>
+            <button class="btn btn-ghost btn-lg" type="button" data-action="start-reinforce">去今日加强</button>
           </div>
         `;
       }
       return `
         <div class="empty-state">
           <div class="empty-icon">${icon("book")}</div>
-          <h3>今日新词池 ${newCount} 个</h3>
+          <h3>今日新词 ${remaining} 个（已学 ${learned} / ${target}）</h3>
           <p>新词来自真题精读推荐、B2/C1 和跨套复现词。先按顺序过一轮，不要求一次背会。</p>
-          <button class="btn btn-primary btn-lg" type="button" data-action="start-new">${icon("arrow")} 开始 ${newCount} 个新词</button>
+          <button class="btn btn-primary btn-lg" type="button" data-action="start-new">${icon("arrow")} 开始 ${remaining} 个新词</button>
         </div>
       `;
     }
+
+    if (ui.reviewTab === "reinforce") {
+      const reinforce = reinforcedToday();
+      if (!reinforce.length) {
+        return `
+          <div class="empty-state">
+            <div class="empty-icon">${icon("check")}</div>
+            <h3>今天没有需要加强的词</h3>
+            <p>学新词时标成“忘记 / 模糊”的词会自动进这里，当天就能再练一次。</p>
+            <button class="btn btn-primary btn-lg" type="button" data-action="start-new">${icon("book")} 去学新词</button>
+          </div>
+        `;
+      }
+      return `
+        <div class="empty-state">
+          <div class="empty-icon">${icon("flame")}</div>
+          <h3>今日加强 ${reinforce.length} 个</h3>
+          <p>这些是你今天刚学、但标成陌生或模糊的词。趁记忆还热，再回忆一遍。</p>
+          <button class="btn btn-primary btn-lg" type="button" data-action="start-reinforce">${icon("arrow")} 开始加强</button>
+        </div>
+      `;
+    }
+
     return `
       <div class="empty-state">
         <div class="empty-icon">${icon("cards")}</div>
@@ -3089,13 +3728,25 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     const remember = session.stats.remember;
     const fuzzy = session.stats.fuzzy;
     const forget = session.stats.forget;
+    const learned = newLearnedToday();
+    const target = dailyNewTarget();
+    const nextBatch = Math.min(EXTRA_BATCH, newQueue().length);
+    const summary = session.mode === "new"
+      ? `今天累计已学 ${learned} 个${target ? ` / 目标 ${target}` : ""}，忘记的词已放回今日队列。`
+      : "忘记的词已放回今日队列，今天还能再练一次。";
+    const primaryLabel = session.mode === "new"
+      ? (nextBatch ? `再学 ${nextBatch} 个` : "回词书")
+      : session.mode === "reinforce" ? "再加强一轮" : "再一轮";
+    const primaryAction = session.mode === "new" && !nextBatch
+      ? "go"
+      : session.mode === "new" ? "start-new-extra" : session.mode === "reinforce" ? "start-reinforce" : "start-review";
     return `
       <div class="card quiz-card quiz-result">
-        <div class="score">${Math.round((remember / total) * 100)}<span style="font-size:18px">%</span></div>
+        <div class="score">${total ? Math.round((remember / total) * 100) : 0}<span style="font-size:18px">%</span></div>
         <h3>这一轮走完了</h3>
-        <p>记得 ${remember} · 模糊 ${fuzzy} · 忘记 ${forget}。忘记的词已自动回到 1 天后。</p>
+        <p>记得 ${remember} · 模糊 ${fuzzy} · 忘记 ${forget}。${summary}</p>
         <div class="hero-actions" style="justify-content:center">
-          <button class="btn btn-primary" type="button" data-action="${session.mode === "new" ? "start-new" : "start-review"}">再一轮</button>
+          <button class="btn btn-primary" type="button" data-action="${primaryAction}" ${primaryAction === "go" ? 'data-view="words"' : ""}>${primaryLabel}</button>
           <button class="btn btn-soft" type="button" data-action="go" data-view="words">回词书</button>
           <button class="btn btn-ghost" type="button" data-action="go" data-view="today">回今日</button>
         </div>
@@ -3116,6 +3767,11 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       saveStore();
     }
     session.stats[grade] += 1;
+    // 忘记的词在这一轮末尾再出现一次，不用等到明天
+    if (grade === "forget" && !session.relearned.has(word.id)) {
+      session.relearned.add(word.id);
+      session.queue.push(word);
+    }
     session.index += 1;
     session.revealed = false;
     render();
@@ -3372,6 +4028,7 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
         <div class="modal-context">
           <div class="label">EXAM CONTEXT · 原文语境</div>
           <blockquote>${highlight(contextData.text, contextData.surface)}</blockquote>
+          ${cnBlock(contextData.text)}
           <div class="modal-source"><span>${esc(ctxSource(contextData))}${contextData.article_title ? ` · ${esc(shorten(contextData.article_title, 90))}` : ""}</span>${contextData.article_id ? `<button type="button" data-action="modal-open-article" data-article="${escAttr(contextData.article_id)}">去原文 →</button>` : ""}</div>
         </div>
       ` : ""}
@@ -3883,12 +4540,14 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     }
     const importFile = $("#importFile");
     if (importFile) importFile.addEventListener("change", importData);
+    const deckFile = $("#deckFile");
+    if (deckFile) deckFile.addEventListener("change", importDeckFile);
   }
 
   function exportData() {
     const payload = {
       app: "cet6-wordbook",
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
       store,
     };
@@ -3918,6 +4577,9 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
           words: next.words || {},
           days: next.days || {},
           listening: { segments: next.listening?.segments || {} },
+          decks: Array.isArray(next.decks) ? next.decks : [],
+          cards: next.cards && typeof next.cards === "object" ? next.cards : {},
+          translations: next.translations && typeof next.translations === "object" ? next.translations : {},
           settings: { ...defaultStore().settings, ...(next.settings || {}) },
           streak: { ...defaultStore().streak, ...(next.streak || {}) },
         };
@@ -3934,8 +4596,12 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
   }
 
   function resetData() {
-    if (!confirm("重置会清空所有熟悉/陌生/收藏和每日记录。确定吗？")) return;
+    if (!confirm("重置会清空所有熟悉/陌生/收藏和每日记录，背诵库卡组和已翻译的例句会保留。确定吗？")) return;
+    const decks = store.decks || [];
+    const translations = store.translations || {};
     store = defaultStore();
+    store.decks = decks;
+    store.translations = translations;
     saveStore();
     applyTheme();
     render();
@@ -3998,6 +4664,10 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       if (action === "ctx-speak") hideContextMenu();
       return;
     }
+    if (action === "translate-sentence") {
+      translateContext(actionNode);
+      return;
+    }
     if (action === "toggle-fav" || action === "modal-fav" || action === "ctx-fav") {
       toggleFavorite(actionNode.dataset.word);
       if (action === "ctx-fav") hideContextMenu();
@@ -4024,7 +4694,17 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
     }
     if (action === "start-review") { startReview("due"); return; }
     if (action === "start-new") { startReview("new"); return; }
+    if (action === "start-new-extra") { startReview("new", EXTRA_BATCH); return; }
+    if (action === "start-reinforce") { startReview("reinforce"); return; }
     if (action === "start-quiz") { startQuiz(); return; }
+    if (action === "start-deck") { startDeck(actionNode.dataset.deck); return; }
+    if (action === "deck-reveal") { revealDeckCard(); return; }
+    if (action === "deck-grade") { gradeDeckCard(actionNode.dataset.grade); return; }
+    if (action === "deck-skip") { skipDeckCard(); return; }
+    if (action === "create-deck") { createDeckFromForm(); return; }
+    if (action === "delete-deck") { deleteDeck(actionNode.dataset.deck); return; }
+    if (action === "export-deck") { exportDeck(actionNode.dataset.deck); return; }
+    if (action === "import-deck") { $("#deckFile")?.click(); return; }
     if (action === "review-tab") {
       ui.reviewTab = actionNode.dataset.tab;
       ui.session = null;
@@ -4175,6 +4855,16 @@ window.CET6_DATA={"meta":{"title":"CET-6 12套一卷语境词书","exam_date":"2
       } else if (ui.session.revealed && ["Digit1", "Digit2", "Digit3"].includes(event.code)) {
         event.preventDefault();
         gradeCard(event.code === "Digit1" ? "forget" : event.code === "Digit2" ? "fuzzy" : "remember");
+      }
+    }
+    if (ui.view === "study" && ui.deckSession) {
+      if (event.target.matches("input, textarea, select")) return;
+      if (!ui.deckSession.revealed && (event.code === "Space" || event.code === "Enter")) {
+        event.preventDefault();
+        revealDeckCard();
+      } else if (ui.deckSession.revealed && ["Digit1", "Digit2", "Digit3"].includes(event.code)) {
+        event.preventDefault();
+        gradeDeckCard(event.code === "Digit1" ? "forget" : event.code === "Digit2" ? "fuzzy" : "remember");
       }
     }
   }

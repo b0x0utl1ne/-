@@ -1652,3 +1652,48 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- 背诵库 ---------- */
+.text-input,
+.text-area {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 14px/1.6 var(--sans);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.text-area { resize: vertical; min-height: 130px; }
+.text-input:focus,
+.text-area:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.deck-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.deck-list { display: grid; gap: 12px; margin-top: 16px; }
+.deck-card { padding: 18px 20px; }
+.deck-card-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.deck-card-main h3 { margin: 0 0 6px; font: 700 17px var(--serif); }
+.deck-card-main p { margin: 0; color: var(--muted); font-size: 12px; }
+.deck-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.deck-bar { margin-top: 14px; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.deck-bar span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+
+@media (max-width: 720px) {
+  .deck-card-main { flex-direction: column; }
+}
+
+/* ---------- 例句中文 ---------- */
+.ctx-cn { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-top: 6px; }
+.cn-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: 600 11px/1 var(--sans);
+  padding: 4px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: .5px;
+}
+.cn-btn:hover { color: var(--accent); border-color: var(--accent); }
+.cn-body { flex: 1 1 100%; color: var(--ink); font-size: 13px; line-height: 1.7; opacity: .92; }
+.cn-body[hidden] { display: none; }
