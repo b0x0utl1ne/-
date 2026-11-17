@@ -24,6 +24,9 @@ def main() -> None:
     data_js = (SITE / "data.js").read_text(encoding="utf-8")
     app_js = (SITE / "assets" / "app.js").read_text(encoding="utf-8")
 
+    # site/data.js 用 ../audio/ 指向仓库根目录；单文件版就在根目录，去掉这一层
+    data_js = data_js.replace('"../audio/', '"audio/')
+
     if "</style" in css.lower():
         raise SystemExit("refusing to inline CSS containing </style")
 

@@ -4,7 +4,8 @@
 
 ## 现在就能用
 
-最省事：直接双击根目录的 **`CET6-词书.html`**。它是单文件版，CSS、JavaScript 和全部词书数据都已内嵌，不需要启动服务器。
+最省事：直接双击根目录的 **`CET6-词书.html`**。它是单文件版，CSS、JavaScript、全部词书数据和例句译文都已内嵌，不需要启动服务器，也不需要联网。
+听力音频放在根目录的 **`audio/`**（约 54 MB），所以 `CET6-词书.html` 要和 `audio/` 放在同一层；只拷 HTML 的话阅读和词卡正常，听力没声音。
 学习记录与浏览器和文件路径有关；移动文件、换浏览器或清理缓存前，先在「数据 → 导出备份」保存 JSON。
 
 如果浏览器对 `file://` 本地存储限制较多，再用服务器版：
@@ -14,7 +15,7 @@ cd /home/wsa/英语六级学习
 ./start.sh
 ```
 
-浏览器打开 `http://127.0.0.1:8765/`。`start.sh` 会优先用 Edge 打开。
+浏览器打开 `http://127.0.0.1:8765/site/`。`start.sh` 会优先用 Edge 打开。
 
 也可以直接打开 `site/index.html`，但建议用本地服务器，浏览器本地记录更稳定。
 
@@ -36,7 +37,7 @@ cd /home/wsa/英语六级学习
 5. **精听闭环**：盲听做题 → 核对答案 → 原文精读 → 90 秒听写 → 跟读 3–5 句。原文可遮挡，右击单词仍能查词和标记；听写草稿与“精听完成”会保存在本机。
 6. **复习**：闪卡先回忆再揭晓；按 `1/2/3` 给“忘记/模糊/记得”。答错的词**当天就回到队列**，不用等到明天；这一轮里还会再出现一次。间隔按 1 → 2 → 4 → 7 → 15 → 30 → 60 天递增。
 7. **今日加强**：当天学过的陌生/模糊词会单独进一个队列，趁热再练。
-8. **例句中文**：词卡和闪卡里的真题例句可以一键翻成中文；闪卡揭晓时自动翻。译文按句缓存在本机，翻过一次以后离线也能看。首次翻译需要联网（MyMemory 公开接口），机器翻译仅供参考。
+8. **例句中文**：真题例句的中文译文在构建时已经全部翻好、随页面内嵌，**默认显示，点「隐藏中文」可收起，完全不联网**。
 9. **背诵库**：六级词书之外的内容（其他单词、名词解释、法条、古诗、面试题）可以建独立卡组，按行粘贴或导入 JSON，也能导出；卡组共用同一套间隔复习。
 10. **测验**：从真题句子里挖空，四选一；正确/错误会改变词的复习状态。
 11. **数据**：导出 JSON 备份、导入、重置；记录只保存在本机 `localStorage`。
@@ -59,7 +60,8 @@ cd /home/wsa/英语六级学习
 - 文章原文来自 [懒笔记 CET-6 真题文章](https://english-exam.lazynote.cn/cet6/articles/)；PDF 题干/选项来自 [CET通](https://www.cettong.cn/library/cet6) 作为补充。
 - 听力分段起点和终点来自懒笔记的听力播放器数据；页面对应的题干与答案解析也链接回懒笔记。
 - 11 套音频来自 CET通；2026-06 使用蜻蜓FM 的 25:36 同版完整录音，因为 CET通暂未提供该套。
-- 音频是远程资源，**双击单文件版时仍需联网播放**；网页不会把“打开失败”伪装成已完成。音频源失效时，可打开页面里的“音频源”链接核对。
+- 音频已下载到仓库 `audio/`（约 54 MB），页面直接读本地文件，不再依赖外网；网页不会把“打开失败”伪装成已完成。
+- 例句中文译文由构建脚本一次性生成，存放在 `data/translations.json`，不回传、不联网；机器翻译仅供参考。
 - 听写不自动评分，也不伪造逐句时间轴；当前只保存整卷中的精确篇起点和篇终点。
 - 音标和中文释义来自 [ECDICT](https://github.com/skywind3000/ECDICT)，MIT License。
 - `2026-06` 的 PDF 在 CET通 尚未提供，因此该套只用文章页语料；这不影响该套的阅读/听力原文，但不包含该套题干选项的补充词。
@@ -74,6 +76,8 @@ python3 scripts/fetch_corpus.py
 python3 scripts/fetch_reference.py
 python3 scripts/fetch_pdfs.py
 python3 scripts/fetch_listening_meta.py
+python3 scripts/fetch_audio.py        # 把 12 套听力下载到 audio/
+python3 scripts/fetch_translations.py # 生成 data/translations.json
 python3 scripts/build_data.py
 python3 scripts/build_site.py
 python3 scripts/build_single_html.py
@@ -83,8 +87,8 @@ node --check site/assets/app.js
 
 重建数据还需要系统里的 `pdftotext`（Poppler）和 `python3 -m pip install -r requirements.txt`。
 
-`data/raw/` 是下载缓存，不提交 git；`data/corpus/`、`data/words.json` 和 `site/data.js` 是可复现产物。
-`CET6-词书.html` 是面向双击使用的打包产物。
+`data/raw/` 是下载缓存，不提交 git；`data/corpus/`、`data/words.json`、`data/translations.json` 和 `site/data.js` 是可复现产物。
+`audio/` 和 `CET6-词书.html` 一起提交，保证双击就能离线用。
 
 ## Git
 

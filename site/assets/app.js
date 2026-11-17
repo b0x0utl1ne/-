@@ -76,7 +76,6 @@
     quiz: null,
     studyDeckId: null,
     deckSession: null,
-    translateTried: new Set(),
     searchQuery: "",
     context: null,
     longPressTimer: null,
@@ -874,7 +873,7 @@ resilience	韧性，恢复力
     return `${context.set_label || ""}${context.section ? ` · ${context.section}` : ""}`;
   }
 
-  // ---------- 例句中文翻译：按需翻译并缓存在本机 ----------
+  // ---------- 例句中文：构建时翻译好，随页面离线可用 ----------
   function sentenceKey(text) {
     return String(text || "").replace(/\s+/g, " ").trim();
   }
@@ -882,30 +881,9 @@ resilience	韧性，恢复力
   function translationFor(text) {
     const key = sentenceKey(text);
     if (!key) return "";
-    return (store.translations && store.translations[key]) || "";
-  }
-
-  async function translateSentence(text) {
-    const key = sentenceKey(text);
-    if (!key) return "";
-    const cached = translationFor(key);
-    if (cached) return cached;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 12000);
-    try {
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(key)}&langpair=en|zh-CN`;
-      const response = await fetch(url, { signal: controller.signal });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const payload = await response.json();
-      const zh = String(payload?.responseData?.translatedText || "").trim();
-      if (!zh) throw new Error("empty translation");
-      if (!store.translations) store.translations = {};
-      store.translations[key] = zh;
-      saveStore();
-      return zh;
-    } finally {
-      clearTimeout(timer);
-    }
+    return (DATA.translations && DATA.translations[key])
+      || (store.translations && store.translations[key])
+      || "";
   }
 
   function cnBlock(text, auto = false) {
@@ -914,63 +892,24 @@ resilience	韧性，恢复力
     const cached = translationFor(key);
     const attr = auto ? ' data-auto="1"' : "";
     return `<div class="ctx-cn"${attr}>
-      <button class="cn-btn" type="button" data-action="translate-sentence" data-text="${escAttr(key)}"${attr} aria-expanded="${cached ? "true" : "false"}">${cached ? "隐藏中文" : "中 文"}</button>
-      <span class="cn-body" data-key="${escAttr(key)}" title="机器翻译，仅供参考"${cached ? "" : " hidden"}>${esc(cached)}</span>
+      <button class="cn-btn" type="button" data-action="translate-sentence" data-text="${escAttr(key)}" aria-expanded="${cached ? "true" : "false"}">${cached ? "隐藏中文" : "中 文"}</button>
+      <span class="cn-body" data-key="${escAttr(key)}"${cached ? "" : " hidden"}>${esc(cached)}</span>
     </div>`;
   }
 
-  function updateTranslationNodes(key, zh) {
-    $$(".cn-body").forEach((node) => {
-      if (node.dataset.key !== key) return;
-      node.textContent = zh;
-      node.hidden = false;
-      const button = node.closest(".ctx-cn")?.querySelector(".cn-btn");
-      if (button) {
-        button.textContent = "隐藏中文";
-        button.setAttribute("aria-expanded", "true");
-      }
-    });
-  }
-
-  async function translateContext(button) {
+  function translateContext(button) {
     const text = button.dataset.text || "";
     if (!text) return;
-    const box = button.closest(".ctx-cn");
-    const body = box ? box.querySelector(".cn-body") : null;
+    const body = button.closest(".ctx-cn")?.querySelector(".cn-body");
     if (!body) return;
-    const cached = translationFor(text);
-    if (cached) {
-      const show = body.hidden;
-      body.hidden = !show;
-      button.textContent = show ? "隐藏中文" : "中 文";
-      button.setAttribute("aria-expanded", show ? "true" : "false");
+    if (!body.textContent.trim()) {
+      toast("这条例句没有预置译文，可以先用划词翻译");
       return;
     }
-    if (button.dataset.busy === "1") return;
-    button.dataset.busy = "1";
-    button.textContent = "翻译中…";
-    try {
-      const zh = await translateSentence(text);
-      updateTranslationNodes(text, zh);
-    } catch {
-      if (!document.contains(body)) return;
-      body.textContent = "翻译失败：可能被限流或断网，稍后再点一次";
-      body.hidden = false;
-      button.textContent = "重试";
-    } finally {
-      delete button.dataset.busy;
-    }
-  }
-
-  function autoTranslateContext() {
-    if (ui.view !== "review" || !ui.session || !ui.session.revealed) return;
-    const button = $('.ctx-cn[data-auto="1"] [data-action="translate-sentence"]');
-    if (!button) return;
-    const text = button.dataset.text || "";
-    if (!text || translationFor(text)) return;
-    if (ui.translateTried.has(text)) return;
-    ui.translateTried.add(text);
-    translateContext(button);
+    const show = body.hidden;
+    body.hidden = !show;
+    button.textContent = show ? "隐藏中文" : "中 文";
+    button.setAttribute("aria-expanded", show ? "true" : "false");
   }
 
   function viewHead(kicker, title, subtitle = "", action = "") {
@@ -1093,7 +1032,6 @@ resilience	韧性，恢复力
     bindViewInputs();
     bindListeningAudio();
     updateChrome();
-    autoTranslateContext();
   }
 
   function renderToday() {
